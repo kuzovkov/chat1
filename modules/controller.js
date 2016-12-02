@@ -8,16 +8,30 @@ var fs = require('fs');
 * обработчик GET запроса на '/'
 **/
 function index(req,res){
-    /*
-    setCookie(req,res);
-    var lang = req.cookies.lang;
-    if (lang == undefined) lang = 'ru';
-    var dict = dicts[lang];
-    var locations = [];
-    for (var key in global.locations)
-        locations.push({id: global.locations[key].id, name: global.locations[key].name});
-       */
-    res.render('index');
+    var nicname = req.cookies.nicname;
+    if ( nicname == undefined || nicname == 'undefined'){
+        res.redirect('/choosenicname');
+        res.end();
+    }else{
+        res.render('index', {nicname:nicname});
+    }
+
+}
+
+/**
+* обработчик GET запроса на '/choosenicname'
+**/
+function choosenicname(req, res){
+    res.render('choosenicname');
+}
+
+function newUser(req,res){
+    var nicname = req.body.nicname;
+    global.sdata.addUser(nicname);
+    res.cookie('nicname', nicname);
+    res.redirect('/');
+    res.end();
+
 }
 
 /**
@@ -51,4 +65,6 @@ function setCookie(req,res){
 
 exports.index = index;
 exports.user = user;
+exports.choosenicname = choosenicname;
+exports.newUser = newUser;
 

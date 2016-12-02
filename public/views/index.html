@@ -1,8 +1,8 @@
-{% extends 'layout.html' %}
+{% extends 'chat_layout.html' %}
 
 {% block content %}
 <div class="chat">
-    You ID: <div id="user_id"></div>
+    You NicName: <div id="nicname">{% nicname %}</div>
     <div id="info"></div>
     <p><div id="messages"></div></p>
     <p><input type="text" id="input"><button id="send-btn">Send</button></p>

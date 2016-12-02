@@ -11,7 +11,7 @@ I.init = function(app){
     I.messages = document.getElementById('messages');
     I.input = document.getElementById('input');
     I.send_btn = document.getElementById('send-btn');
-    I.div_id = document.getElementById('user_id');
+    I.nicname = document.getElementById('nicname');
     I.send_btn.onclick = I.btnSendHandler;
     window.onkeypress = I.keyPressHandler;
     I.restoreMessages();

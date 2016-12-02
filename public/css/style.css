@@ -15,3 +15,14 @@
     border: 2px solid grey;
     overflow: scroll;
 }
+
+.central
+{
+    position: absolute;
+    width: 600px;
+    height: 300px;
+    top: 50%;
+    left: 50%;
+    margin-top: -150px;
+    margin-left: -300px;
+}

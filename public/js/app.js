@@ -22,7 +22,6 @@ A.setEventHandlers = function(){
     A.socket.setEventHandler('new_message', A.newMessage);
     A.socket.setEventHandler('new_user', A.newUser);
     A.socket.setEventHandler('user_disconnected', A.userLost);
-    A.socket.setEventHandler('assign_id', A.assignId);
 };
 
 /**
@@ -58,7 +57,4 @@ A.userLost = function(data){
     A.iface.addMessage(mess);
 };
 
-A.assignId = function(data){
-    A.iface.showId(data.id);
-}
 

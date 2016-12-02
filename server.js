@@ -7,7 +7,8 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var port = 8000;
 var Helper = require('./modules/helper');
-//var sdata = require('./modules/sdata');
+var sdata = require('./modules/sdata');
+global.sdata = sdata;
 var controller = require('./modules/controller');
 var Handler = require('./modules/handler');
 var cons = require('consolidate');
@@ -29,6 +30,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 /*основной маршрут*/
 app.get('/', controller.index );
+app.get('/choosenicname', controller.choosenicname);
+app.post('/', controller.newUser);
 
 io.on('connection', function(socket){
 
