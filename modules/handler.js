@@ -2,28 +2,29 @@
 var httpRequest = require('./httprequest');
 
 
-function user_connect(socket){
+function user_connect(socket, chat){
     socket.on('user_connect', function(data){
-        var user_id = socket.id;
-        console.log(user_id);
-        socket.broadcast.emit('new_user', {'user_id':user_id});
+        var nicname = data.nicname;
+        chat.refreshSocketId(nicname, socket.id);
+        socket.broadcast.emit('new_user', {'user':nicname});
     });
 }
 
 
-function user_disconnect(socket){
+function user_disconnect(socket, chat){
     socket.on('disconnect', function(){
-        var user_id = socket.id;
-        console.log('user '+ user_id + ' was disconnected');
-        socket.broadcast.emit('user_disconnected', {user_id: user_id});
+        var nicname = chat.getNicname(socket.id);
+        console.log('user '+ nicname + ' was disconnected');
+        chat.removeUser(socket.id);
+        socket.broadcast.emit('user_disconnected', {user: nicname});
     });
 }
 
-function user_message(socket){
+function user_message(socket, chat){
     socket.on('user_message', function(data){
-        var user_id = socket.id;
-        socket.broadcast.emit('new_message', {message: [user_id,':',data.message].join('')});
-        socket.emit('new_message', {message: [user_id,':',data.message].join('')});
+        var nicname = chat.getNicname(socket.id);
+        socket.broadcast.emit('new_message', {message:data.message, user:nicname});
+        socket.emit('new_message', {message:data.message, user:nicname});
     });
 }
 

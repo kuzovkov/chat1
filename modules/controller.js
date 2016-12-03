@@ -25,13 +25,20 @@ function choosenicname(req, res){
     res.render('choosenicname');
 }
 
+/**
+ * @param req
+ * @param res
+ */
 function newUser(req,res){
     var nicname = req.body.nicname;
-    global.sdata.addUser(nicname);
-    res.cookie('nicname', nicname);
-    res.redirect('/');
-    res.end();
-
+    if (!global.chat.addUser(nicname)){
+        var message = 'This NicName is busy';
+        res.render('choosenicname', {message:message});
+    }else{
+        res.cookie('nicname', nicname);
+        res.redirect('/');
+        res.end();
+    }
 }
 
 /**

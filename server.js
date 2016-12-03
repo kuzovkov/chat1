@@ -7,8 +7,8 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var port = 8000;
 var Helper = require('./modules/helper');
-var sdata = require('./modules/sdata');
-global.sdata = sdata;
+var chat = require('./modules/chat');
+global.chat = chat;
 var controller = require('./modules/controller');
 var Handler = require('./modules/handler');
 var cons = require('consolidate');
@@ -31,13 +31,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 /*основной маршрут*/
 app.get('/', controller.index );
 app.get('/choosenicname', controller.choosenicname);
-app.post('/', controller.newUser);
+app.post('/choosenicname', controller.newUser);
 
 io.on('connection', function(socket){
 
-    Handler.user_connect(socket);
-    Handler.user_disconnect(socket);
-    Handler.user_message(socket);
+    Handler.user_connect(socket, chat);
+    Handler.user_disconnect(socket, chat);
+    Handler.user_message(socket, chat);
 
 });
 
@@ -49,13 +49,13 @@ for ( var key in locations){
     /*обработчики событий модуля socket.io*/
     /*
     io.of('/user/'+key).on('connection',function(socket){
-        Handler.get_game(socket, sdata);
-        Handler.join_user(socket, sdata);
-        Handler.data_from_client(socket, sdata);
-        Handler.getnearestnode(socket, sdata);
-        Handler.getroute(socket, sdata);
-        Handler.add_unit(socket, sdata);
-        Handler.del_unit(socket, sdata);
+        Handler.get_game(socket, chat);
+        Handler.join_user(socket, chat);
+        Handler.data_from_client(socket, chat);
+        Handler.getnearestnode(socket, chat);
+        Handler.getroute(socket, chat);
+        Handler.add_unit(socket, chat);
+        Handler.del_unit(socket, chat);
     });
 
 }

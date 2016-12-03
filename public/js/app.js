@@ -1,4 +1,5 @@
 var A = {};
+A.nicname = null;
 
 /**
  * инициализация приложения
@@ -28,7 +29,7 @@ A.setEventHandlers = function(){
  * обработчик события connect
  **/
 A.connect = function(){
-    A.socket.send('user_connect');
+    A.socket.send('user_connect', {nicname: A.nicname});
 };
 
 /**
@@ -44,17 +45,17 @@ A.sendUserMessage = function(message){
 };
 
 A.newMessage = function(data){
-    A.iface.addMessage(data.message);
+    A.iface.addMessage(data.user, data.message);
 };
 
 A.newUser = function(data){
-    var mess = 'New user ' + data.user_id + ' was connected!';
-    A.iface.addMessage(mess);
+    var mess = 'New user ' + data.user + ' was connected!';
+    A.iface.addMessage('Server', mess);
 };
 
 A.userLost = function(data){
-    var mess = 'User ' + data.user_id + ' was disconnected!';
-    A.iface.addMessage(mess);
+    var mess = 'User ' + data.user + ' was disconnected!';
+    A.iface.addMessage('Server', mess);
 };
 
 

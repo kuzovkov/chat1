@@ -1,6 +1,7 @@
 var I = {};
 
 I.app = null;
+I.messages = [];
 
 /**
  * инициализация приложения
@@ -8,24 +9,30 @@ I.app = null;
  */
 I.init = function(app){
     I.app = app;
-    I.messages = document.getElementById('messages');
+    I.messages_block = document.getElementById('messages');
     I.input = document.getElementById('input');
     I.send_btn = document.getElementById('send-btn');
     I.nicname = document.getElementById('nicname');
+    I.clear_btn = document.getElementById('clear-btn');
     I.send_btn.onclick = I.btnSendHandler;
+    I.exit_btn = document.getElementById('exit-btn');
+    I.exit_btn.onclick = I.exit;
     window.onkeypress = I.keyPressHandler;
+    I.clear_btn.onclick = I.removeHistory;
     I.restoreMessages();
-    I.messages.scrollTop = 9999;
+    I.showMessages();
+    I.messages_block.scrollTop = 9999;
+    I.app.nicname = document.getElementById('nicname').innerHTML;
 };
 
 /**
  * добавление сообщения в список сообщений
  * @param message
  */
-I.addMessage = function(message){
-    I.messages.innerHTML = I.messages.innerHTML + '<br/>' + message;
-    I.messages.scrollTop = 9999;
+I.addMessage = function(user, message){
+    I.messages.push({author:user, text:message});
     I.saveMessages();
+    I.showMessages();
 };
 
 /**
@@ -51,7 +58,7 @@ I.keyPressHandler = function(e){
  */
 I.saveMessages = function(){
     if (window.localStorage){
-        window.localStorage.setItem('messages', I.messages.innerHTML);
+        window.localStorage.setItem('messages', JSON.stringify(I.messages));
     }
 }
 
@@ -61,10 +68,43 @@ I.saveMessages = function(){
  */
 I.restoreMessages = function(){
     if (window.localStorage){
-        I.messages.innerHTML = window.localStorage.getItem('messages');
+        I.messages = JSON.parse(window.localStorage.getItem('messages'));
+        if (I.messages == null){
+            I.messages = [];
+        }
     }
 };
 
-I.showId = function(id){
-    I.div_id.innerHTML = id;
+/**
+ * показ списка сообщений
+ */
+I.showMessages = function(){
+    var html = ['<ul class="messages-list">'];
+    for (var i = 0; i < I.messages.length; i++){
+        html.push('<li><span class="author">');
+        html.push(I.messages[i]['author']);
+        html.push('</span>: <span class="text">');
+        html.push(I.messages[i]['text']);
+        html.push('</span></li>');
+    }
+    html.push('</ul>');
+    I.messages_block.innerHTML = html.join('');
 }
+
+/**
+ * удаление истории  сообщений
+ */
+I.removeHistory = function(){
+    window.localStorage.removeItem('messages');
+    I.restoreMessages();
+    I.showMessages();
+};
+
+/**
+ * выход из чата
+ */
+I.exit = function(){
+    deleteCookie('nicname');
+    window.location.reload(true);
+};
+

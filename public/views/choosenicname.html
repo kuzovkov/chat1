@@ -2,10 +2,17 @@
 
 {% block content %}
     <div class="central">
-        <form "method"=post action="/" >
-            Choose You NicName: <input type="text" name="nicname">
+        <div class="message">{% if message %}{{message}}{% endif %}</div>
+        <form method="post" action="/choosenicname">
+            Choose You NicName: <input type="text" name="nicname"/>
             <button>Choose</button>
         </form>
 
     </div>
+
+<script>
+    if (!navigator.cookieEnabled) {
+        alert( 'Включите cookie для комфортной работы с этим сайтом' );
+    }
+</script>
 {% endblock %}

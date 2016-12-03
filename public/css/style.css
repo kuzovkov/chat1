@@ -26,3 +26,22 @@
     margin-top: -150px;
     margin-left: -300px;
 }
+
+.message
+{
+    color: red;
+}
+
+.author
+{
+    color: blue;
+}
+
+.text{
+    color: grey;
+}
+
+ul.messages-list
+{
+    list-style-type: none;
+}
