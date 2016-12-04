@@ -2,7 +2,8 @@ var I = {};
 
 I.app = null;
 I.messages = [];
-I.NOTE_TIME = 3000; /*время показа заметки*/
+I.NOTE_TIME = 5000; /*время показа заметки*/
+I.timeout = null;
 
 /**
  * инициализация объекта интерфейса
@@ -12,6 +13,7 @@ I.init = function(app){
     I.app = app;
     I.messages_block = document.getElementById('messages');
     I.note_block = document.getElementById('note');
+    I.note_text = document.getElementById('note-text');
     I.note_close = document.getElementById('note-close');
     if (I.note_close != null) I.note_close.onclick = I.hideNote;
     I.input = document.getElementById('input');
@@ -194,17 +196,21 @@ I.selectUser = function(e){
  */
 I.showNote = function(text){
     if (I.note_block == null) return;
-    I.note_block.innerHTML = text;
+    I.note_text.innerHTML = text;
     I.note_block.style.display = 'block';
-    setInterval(I.hideNote, I.NOTE_TIME);
+    I.timeout = setTimeout(I.hideNote, I.NOTE_TIME);
 };
 
 /**
  * сокрытие заметки
  */
 I.hideNote = function(){
-    if (I.note_block == null) return;
-    I.note_block.innerHTML = '';
+    if (I.timeout != null){
+        clearTimeout(I.timeout);
+        I.timeout = null;
+    }
+    if (I.note_block == null || I.note_text == null) return;
+    I.note_text.innerHTML = '';
     I.note_block.style.display = 'none';
 };
 

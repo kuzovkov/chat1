@@ -126,15 +126,17 @@ ul.messages-list
 .note
 {
     width: 400px;
-    height: 100px;
+    height: 50px;
     border: 2px solid grey;
     font-size: 0.8em;
     border-radius: 10px;
     background-color: #ffd700;
+    opacity: 0.5;
     position: absolute;
     bottom: 20px;
-    right: 0px;
+    right: 10px;
     display: none;
+
 }
 
 #note-close
@@ -143,4 +145,16 @@ ul.messages-list
     position: absolute;
     top: 5px;
     right: 5px;
+    font-size: 1.1em;
+}
+
+#note-text
+{
+    width:350px;
+    height: 45px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -23px;
+    margin-left: -175px;
 }
