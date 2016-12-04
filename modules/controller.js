@@ -13,7 +13,8 @@ function index(req,res){
         res.redirect('/choosenicname');
         res.end();
     }else{
-        res.render('index', {nicname:nicname});
+        var userlist = global.chat.getUsersOnline();
+        res.render('index', {nicname:nicname, userlist: userlist});
     }
 
 }
@@ -26,7 +27,8 @@ function choosenicname(req, res){
 }
 
 /**
- * @param req
+ * обработчик POST запроса на '/choosenicname'
+ *  @param req
  * @param res
  */
 function newUser(req,res){
@@ -42,36 +44,24 @@ function newUser(req,res){
 }
 
 /**
-* обработчик GET запроса на '/user/:id'
+* обработчик GET запроса на '/chat/:nicname'
 **/
-function user(req, res){
-    var location = req.params.id;
-    setCookie(req,res);
-    var lang = req.cookies.lang;
-    if (lang == undefined) lang = 'ru';
-    var dict = dicts[lang];
-    var user_id = req.cookies.user_id;
-    if ( global.sdata.games[location].users[user_id] == undefined ){
-        res.render('join',{title:global.locations[location]['name'],dict:dict});
-    }else{
-        res.render('play',{title:global.locations[location]['name'], countries:global.locations[location]['countries'], dict:dict});
-    }
+function chat(req, res){
+    var nicname = req.params.nicname;
+    var userlist = global.chat.getUsersOnline();
+    global.io.of('/chat' + nicname).on('connection', function(socket){
+        Handler.user_connect(socket, chat);
+        Handler.user_disconnect(socket, chat);
+        Handler.user_message(socket, chat);
+    });
+    res.render('chat', {nicname:nicname, userlist:userlist});
 
-}
-
-/**
-* установка cookie user_id если нет во входящем запросе
-**/
-function setCookie(req,res){
-    var id = req.cookies.user_id;
-    if ( id == undefined || id == 'undefined')
-        res.cookie('user_id',global.helper.getRandomInt(100000000,200000000));
 }
 
 
 
 exports.index = index;
-exports.user = user;
+exports.chat = chat;
 exports.choosenicname = choosenicname;
 exports.newUser = newUser;
 

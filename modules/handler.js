@@ -6,7 +6,11 @@ function user_connect(socket, chat){
     socket.on('user_connect', function(data){
         var nicname = data.nicname;
         chat.refreshSocketId(nicname, socket.id);
+        var users_online = chat.getUsersOnline();
+        console.log(users_online);
         socket.broadcast.emit('new_user', {'user':nicname});
+        socket.broadcast.emit('users_online', {users_online:users_online});
+        socket.emit('users_online', {users_online:users_online});
     });
 }
 
@@ -17,16 +21,22 @@ function user_disconnect(socket, chat){
         console.log('user '+ nicname + ' was disconnected');
         chat.removeUser(socket.id);
         socket.broadcast.emit('user_disconnected', {user: nicname});
+        var users_online = chat.getUsersOnline();
+        socket.emit('users_online', {users_online:users_online});
+        socket.broadcast.emit('users_online', {users_online:users_online});
     });
 }
 
 function user_message(socket, chat){
     socket.on('user_message', function(data){
+        console.log(data);
         var nicname = chat.getNicname(socket.id);
-        socket.broadcast.emit('new_message', {message:data.message, user:nicname});
+        var adresat_id = chat.getSocketId(data.to);
+        socket.broadcast.to(adresat_id).emit('new_message', {message:data.message, user:nicname});
         socket.emit('new_message', {message:data.message, user:nicname});
     });
 }
+
 
 
 exports.user_connect = user_connect;

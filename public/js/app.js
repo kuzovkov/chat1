@@ -1,5 +1,6 @@
 var A = {};
 A.nicname = null;
+A.selected_user = null;
 
 /**
  * инициализация приложения
@@ -23,6 +24,7 @@ A.setEventHandlers = function(){
     A.socket.setEventHandler('new_message', A.newMessage);
     A.socket.setEventHandler('new_user', A.newUser);
     A.socket.setEventHandler('user_disconnected', A.userLost);
+    A.socket.setEventHandler('users_online', A.refreshUsersOnline);
 };
 
 /**
@@ -41,7 +43,7 @@ A.disconnect = function(){
 };
 
 A.sendUserMessage = function(message){
-    A.socket.send('user_message', {message: message});
+    A.socket.send('user_message', {message: message, to:A.selected_user});
 };
 
 A.newMessage = function(data){
@@ -57,5 +59,15 @@ A.userLost = function(data){
     var mess = 'User ' + data.user + ' was disconnected!';
     A.iface.addMessage('Server', mess);
 };
+
+A.refreshUsersOnline = function(data){
+    console.log(data.users_online);
+    I.refreshUsersOnline(data.users_online);
+};
+
+A.selectUser = function(user){
+    A.selected_user = user;
+};
+
 
 

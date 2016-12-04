@@ -9,6 +9,7 @@ var port = 8000;
 var Helper = require('./modules/helper');
 var chat = require('./modules/chat');
 global.chat = chat;
+global.io = io;
 var controller = require('./modules/controller');
 var Handler = require('./modules/handler');
 var cons = require('consolidate');
@@ -33,17 +34,17 @@ app.get('/', controller.index );
 app.get('/choosenicname', controller.choosenicname);
 app.post('/choosenicname', controller.newUser);
 
-io.on('connection', function(socket){
 
+io.on('connection', function(socket){
     Handler.user_connect(socket, chat);
     Handler.user_disconnect(socket, chat);
     Handler.user_message(socket, chat);
-
 });
+
 
 /*установка обработчика на url /location/:loc*/
 /*
-for ( var key in locations){
+ for ( var key in locations){
     app.get('/user/:id', controller.user);
 
     /*обработчики событий модуля socket.io*/

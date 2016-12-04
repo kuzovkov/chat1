@@ -45,3 +45,70 @@ ul.messages-list
 {
     list-style-type: none;
 }
+
+.user-list ul
+{
+    list-style-type: none;
+}
+
+#panel
+{
+    width: 100%;
+    background-color: #fff;
+    height: 100px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid grey;
+    margin:10px;
+
+}
+
+.users-list
+{
+    width: 100%;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid grey;
+    margin:10px;
+}
+
+.chat
+{
+    width: 100%;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid grey;
+}
+
+.input
+{
+    position: relative;
+    padding-right: 0;
+    /*border: 1px solid red;*/
+}
+
+#send-btn
+{
+    width: 50px;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.content-wrapper
+{
+    margin: 0 50px 0 50px;
+}
+
+#users-online li
+{
+    cursor: pointer;
+    list-style-type: none;
+}
+
+#users-online li.selected
+{
+    background-color: #ff7f50;
+}
