@@ -2,20 +2,25 @@ var I = {};
 
 I.app = null;
 I.messages = [];
+I.NOTE_TIME = 3000; /*время показа заметки*/
 
 /**
- * инициализация приложения
+ * инициализация объекта интерфейса
  * @param app
  */
 I.init = function(app){
     I.app = app;
     I.messages_block = document.getElementById('messages');
+    I.note_block = document.getElementById('note');
+    I.note_close = document.getElementById('note-close');
+    if (I.note_close != null) I.note_close.onclick = I.hideNote;
     I.input = document.getElementById('input');
     I.send_btn = document.getElementById('send-btn');
     I.nicname = document.getElementById('nicname');
     I.clear_btn = document.getElementById('clear-btn');
     I.send_btn.onclick = I.btnSendHandler;
     I.exit_btn = document.getElementById('exit-btn');
+    I.user_for_chat = document.getElementById('user-for-chat');
     if (I.exit_btn != null) I.exit_btn.onclick = I.exit;
     window.onkeypress = I.keyPressHandler;
     if (I.clear_btn != null) I.clear_btn.onclick = I.removeHistory;
@@ -24,6 +29,13 @@ I.init = function(app){
     if (I.messages_block != null) I.messages_block.scrollTop = 9999;
     if (I.nicname != null) I.app.nicname = I.nicname.innerHTML;
     I.list_users_online = document.getElementById('users-online');
+    if (window.localStorage) I.app.selected_user = window.localStorage.getItem('selected_user');
+    document.getElementById('test').onclick = I.test;
+};
+
+
+I.test = function(){
+    I.showNote('test message');
 };
 
 /**
@@ -145,6 +157,7 @@ I.refreshUsersOnline = function(user_list){
     for (var i = 0; i < list.length; i++){
         list[i].addEventListener('click', I.selectUser);
     }
+    if (I.user_for_chat != null) I.user_for_chat.innerHTML = I.app.selected_user;
 };
 
 /**
@@ -169,6 +182,29 @@ I.selectUser = function(e){
         list[i].className = 'user-item';
     }
     this.className = 'user-item selected';
-    I.app.selectUser(this.id.split('-').pop());
+    I.app.setSelectedUser(this.id.split('-').pop());
+    if (window.localStorage){
+        window.localStorage.setItem('selected_user', this.id.split('-').pop());
+    }
+    if (I.user_for_chat != null) I.user_for_chat.innerHTML = I.app.selected_user;
+};
+
+/**
+ * показ заметки
+ */
+I.showNote = function(text){
+    if (I.note_block == null) return;
+    I.note_block.innerHTML = text;
+    I.note_block.style.display = 'block';
+    setInterval(I.hideNote, I.NOTE_TIME);
+};
+
+/**
+ * сокрытие заметки
+ */
+I.hideNote = function(){
+    if (I.note_block == null) return;
+    I.note_block.innerHTML = '';
+    I.note_block.style.display = 'none';
 };
 
