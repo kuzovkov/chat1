@@ -39,6 +39,7 @@ io.on('connection', function(socket){
     Handler.user_connect(socket, chat);
     Handler.user_disconnect(socket, chat);
     Handler.user_message(socket, chat);
+    Handler.message_history(socket, chat);
 });
 
 

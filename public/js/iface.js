@@ -2,8 +2,10 @@ var I = {};
 
 I.app = null;
 I.messages = [];
+I.MAX_MESSAGES_LEN = 500;
 I.NOTE_TIME = 5000; /*время показа заметки*/
 I.timeout = null;
+I.HISTORY_LEFTTIME = 48; /*длина истории сообщений в часах*/
 
 /**
  * инициализация объекта интерфейса
@@ -25,8 +27,6 @@ I.init = function(app){
     I.user_for_chat = document.getElementById('user-for-chat');
     if (I.exit_btn != null) I.exit_btn.onclick = I.exit;
     window.onkeypress = I.keyPressHandler;
-    if (I.clear_btn != null) I.clear_btn.onclick = I.removeHistory;
-    I.restoreMessages();
     I.showMessages();
     if (I.messages_block != null) I.messages_block.scrollTop = 9999;
     if (I.nicname != null) I.app.nicname = I.nicname.innerHTML;
@@ -44,9 +44,11 @@ I.test = function(){
  * добавление сообщения в список сообщений
  * @param message
  */
-I.addMessage = function(user, message){
-    I.messages.push({author:user, text:message});
-    I.saveMessages();
+I.addMessage = function(message){
+    I.messages.push(message);
+    if (I.messages.length > I.MAX_MESSAGES_LEN){
+        I.messages.splice(0, I.messages.length - I.MAX_MESSAGES_LEN);
+    }
     I.showMessages();
 };
 
@@ -69,25 +71,21 @@ I.keyPressHandler = function(e){
 };
 
 /**
- * сохранение истории сообщений
+ * обновление истории сообщений
+ * @param messages
  */
-I.saveMessages = function(){
-    if (window.localStorage){
-        window.localStorage.setItem('messages', JSON.stringify(I.messages));
-    }
-}
+I.refreshMessages = function(messages){
+    I.messages = messages;
+    I.showMessages();
+};
 
 /**
- * получение истории сохранений
- * @returns {string}
+ * обновление истории сообщений в соответствии с выбранныи пользователем
  */
-I.restoreMessages = function(){
-    if (window.localStorage){
-        I.messages = JSON.parse(window.localStorage.getItem('messages'));
-        if (I.messages == null){
-            I.messages = [];
-        }
-    }
+I.switchUser = function(){
+    if (I.messages_block == null) return;
+    I.messages_block.innerHTML = '<img src="/img/preload.gif" class="preload"/>';
+    I.app.requestMessagesHistory();
 };
 
 /**
@@ -97,24 +95,26 @@ I.showMessages = function(){
     if (I.messages_block == null) return;
     var html = ['<ul class="messages-list">'];
     for (var i = 0; i < I.messages.length; i++){
-        html.push('<li><span class="author">');
-        html.push(I.messages[i]['author']);
+        if ((I.messages[i]['from'] != I.app.selected_user) &&
+            (I.messages[i]['from'] != I.app.nicname))
+                continue;
+        html.push('<li><span class="created">[');
+        html.push(I.messages[i]['created']);
+        html.push(']</span>')
+        if (I.messages[i]['from'] == I.app.nicname){
+            html.push('<span class="author-out">');
+        }else{
+            html.push('<span class="author-in">');
+        }
+        html.push(I.messages[i]['from']);
         html.push('</span>: <span class="text">');
-        html.push(I.messages[i]['text']);
+        html.push(I.messages[i]['message']);
         html.push('</span></li>');
     }
     html.push('</ul>');
     I.messages_block.innerHTML = html.join('');
 }
 
-/**
- * удаление истории  сообщений
- */
-I.removeHistory = function(){
-    window.localStorage.removeItem('messages');
-    I.restoreMessages();
-    I.showMessages();
-};
 
 /**
  * выход из чата
@@ -160,6 +160,7 @@ I.refreshUsersOnline = function(user_list){
         list[i].addEventListener('click', I.selectUser);
     }
     if (I.user_for_chat != null) I.user_for_chat.innerHTML = I.app.selected_user;
+    I.switchUser();
 };
 
 /**
@@ -189,6 +190,7 @@ I.selectUser = function(e){
         window.localStorage.setItem('selected_user', this.id.split('-').pop());
     }
     if (I.user_for_chat != null) I.user_for_chat.innerHTML = I.app.selected_user;
+    I.switchUser();
 };
 
 /**

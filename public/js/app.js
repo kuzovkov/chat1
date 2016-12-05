@@ -25,6 +25,7 @@ A.setEventHandlers = function(){
     A.socket.setEventHandler('new_user', A.newUser);
     A.socket.setEventHandler('user_disconnected', A.userLost);
     A.socket.setEventHandler('users_online', A.refreshUsersOnline);
+    A.socket.setEventHandler('last_messages', A.lastMessages);
 };
 
 /**
@@ -55,7 +56,7 @@ A.sendUserMessage = function(message){
  * @param data
  */
 A.newMessage = function(data){
-    A.iface.addMessage(data.user, data.message);
+    A.iface.addMessage(data.message);
 };
 
 /**
@@ -101,5 +102,20 @@ A.serverMessage = function(mess){
     A.iface.hideNote();
     A.iface.showNote(mess);
 };
+
+/**
+ * запрос истории сообщений у сервера
+ */
+A.requestMessagesHistory = function(){
+    A.socket.send('message_history', {user1:A.nicname, user2:A.selected_user, lefttime: A.iface.HISTORY_LEFTTIME});
+};
+
+/**
+ * отображение полученной истории сообщений
+ * @param data
+ */
+A.lastMessages = function(data){
+    A.iface.refreshMessages(data.messages);
+}
 
 
