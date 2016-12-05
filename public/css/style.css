@@ -1,24 +1,29 @@
+p, input, div, button
+{
+    padding: 0;
+    margin: 0;
+}
+
+.cls
+{
+    clear: both;
+}
+
 
 .chat input
 {
     width: 100%;
+    margin: 5px 0 5px 0;
 }
 
-#messages
+.messages
 {
     width: 100%;
-    height: 400px;
+    height: 635px;
     border: 2px solid grey;
     overflow: scroll;
 }
 
-#log
-{
-    width: 100%;
-    height: 100px;
-    border: 2px solid grey;
-    overflow: scroll;
-}
 
 .central
 {
@@ -31,7 +36,7 @@
     margin-left: -300px;
 }
 
-.message
+.error
 {
     color: red;
 }
@@ -55,9 +60,9 @@ ul.messages-list
     list-style-type: none;
 }
 
-#panel
+.panel
 {
-    width: 100%;
+    width: auto;
     background-color: #fff;
     height: 30px;
     padding: 10px;
@@ -69,21 +74,25 @@ ul.messages-list
 
 .users-list
 {
-    width: 100%;
+    width: 15%;
     background-color: #fff;
     padding: 10px;
     border-radius: 10px;
     border: 1px solid grey;
     margin:10px;
+    float: left;
+    height: 680px;
 }
 
 .chat
 {
-    width: 100%;
+    width: 75%;
+    height: 700px;
     margin: 10px;
     padding: 0 10px 0 10px;
     border-radius: 10px;
     border: 1px solid grey;
+    float: right;
 }
 
 .chat p
@@ -99,17 +108,37 @@ ul.messages-list
     /*border: 1px solid red;*/
 }
 
-#send-btn
+.input input
 {
-    width: 50px;
+    width: 100%;
+    height: 30px;
+    border: 1px solid grey;
+    border-radius: 5px;
+    padding: 0;
+}
+
+.input button
+{
     position: absolute;
     right: 0;
     top: 0;
+    height: 30px;
+    width: 80px;
+    margin-top: 6px;
+    margin-right: -1px;
+    border-radius: 5px;
 }
 
 .content-wrapper
 {
     margin: 0 50px 0 50px;
+}
+
+
+#users-online
+{
+    overflow: scroll;
+    height: 620px;
 }
 
 #users-online li

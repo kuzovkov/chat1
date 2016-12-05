@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="central">
-        <div class="message">{% if message %}{{message}}{% endif %}</div>
+        <div class="error">{% if message %}{{message}}{% endif %}</div>
         <form method="post" action="/choosenicname">
             Choose You NicName: <input type="text" name="nicname"/>
             <button>Choose</button>
