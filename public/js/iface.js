@@ -99,7 +99,7 @@ I.showMessages = function(){
             (I.messages[i]['from'] != I.app.nicname))
                 continue;
         html.push('<li><span class="created">[');
-        html.push(I.messages[i]['created']);
+        html.push(I.timestamp2date(I.messages[i]['created']));
         html.push(']</span>')
         if (I.messages[i]['from'] == I.app.nicname){
             html.push('<span class="author-out">');
@@ -139,11 +139,15 @@ I.reloadPage = function(url){
 I.refreshUsersOnline = function(user_list){
     if (I.list_users_online == null) return;
     I.destroyChildren(I.list_users_online);
+    if (user_list.indexOf(I.selected_user) == -1){
+        I.app.selected_user = null;
+    }
     for (var i = 0; i< user_list.length; i++){
         if (user_list[i] == I.app.nicname) continue;
         var li = document.createElement('li');
         li.id = 'chat-' + user_list[i];
         li.className = 'user-item';
+        console.log(I.app.selected_user +':'+user_list[i]);
         if (I.app.selected_user == user_list[i]){
             li.className = 'user-item selected';
         }
@@ -214,5 +218,11 @@ I.hideNote = function(){
     if (I.note_block == null || I.note_text == null) return;
     I.note_text.innerHTML = '';
     I.note_block.style.display = 'none';
+};
+
+
+I.timestamp2date = function(timestamp){
+    var date = new Date(timestamp);
+    return date.toLocaleString();
 };
 
