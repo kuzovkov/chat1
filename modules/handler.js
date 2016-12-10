@@ -45,9 +45,20 @@ function message_history(socket, chat){
     });
 }
 
+function send_file(socket, chat){
+    socket.on('send_file', function(data){
+        var from = chat.getNicname(socket.id);
+        var adresat_id = chat.getSocketId(data.to);
+        chat.saveFile(from, data.to, data.fname, data.fdata, function(fsize){
+            socket.broadcast.to(adresat_id).emit('have_file', {from: from, fname: data.fname, fsize: fsize});
+        });
+    });
+}
+
 
 
 exports.user_connect = user_connect;
 exports.user_disconnect = user_disconnect;
 exports.user_message = user_message;
 exports.message_history = message_history;
+exports.send_file = send_file;

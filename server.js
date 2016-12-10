@@ -42,25 +42,6 @@ io.on('connection', function(socket){
     Handler.user_disconnect(socket, chat);
     Handler.user_message(socket, chat);
     Handler.message_history(socket, chat);
+    Handler.send_file(socket, chat);
 });
 
-
-/*установка обработчика на url /location/:loc*/
-/*
- for ( var key in locations){
-    app.get('/user/:id', controller.user);
-
-    /*обработчики событий модуля socket.io*/
-    /*
-    io.of('/user/'+key).on('connection',function(socket){
-        Handler.get_game(socket, chat);
-        Handler.join_user(socket, chat);
-        Handler.data_from_client(socket, chat);
-        Handler.getnearestnode(socket, chat);
-        Handler.getroute(socket, chat);
-        Handler.add_unit(socket, chat);
-        Handler.del_unit(socket, chat);
-    });
-
-}
-*/

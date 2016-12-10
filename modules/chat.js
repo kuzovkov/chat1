@@ -1,9 +1,13 @@
+var base64 = require('./base64');
+var fs = require('fs');
+
 var Chat = {};
 
 Chat.users = {}; /*объект для хранения ников и id сокетов*/
 Chat.messages = []; /*массив для хранения сообщений*/
 Chat.MAX_COUNT_MESS = 1000; /*максимальное количество хранимых сообщений*/
 Chat.MSEC_IN_HOUR = 3600000; /*миллисекунд в часах*/
+Chat.files = []; /*массив для хранения файлов*/
 
 /**
  * добавление нового пользователя к чату
@@ -118,6 +122,19 @@ Chat.getLastMessages = function(user1, user2, lefttime){
     return messages;
 }
 
+Chat.saveFile = function(from, to, fname, fdata, callback){
+    var filename = base64.base64_encode(fname);
+    fs.writeFile(filename, fdata, function(err){
+        if (!err){
+            fs.stat(filename, function(err, info){
+                var timestamp = (new Date()).getTime();
+                Chat.files.push({from:from, to:to, fname: fname, created: timestamp, fsize:info['size']});
+                callback(info['size']);
+            });
+        }
+    });
+}
+
 
 exports.addUser = Chat.addUser;
 exports.refreshSocketId = Chat.refreshSocketId;
@@ -127,3 +144,4 @@ exports.getUsersOnline = Chat.getUsersOnline;
 exports.getSocketId = Chat.getSocketId;
 exports.addMessage = Chat.addMessage;
 exports.getLastMessages = Chat.getLastMessages;
+exports.saveFile = Chat.saveFile;

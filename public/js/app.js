@@ -28,6 +28,7 @@ A.setEventHandlers= function(){
     A.socket.setEventHandler('user_disconnected', A.userLost);
     A.socket.setEventHandler('users_online', A.refreshUsersOnline);
     A.socket.setEventHandler('last_messages', A.lastMessages);
+    A.socket.setEventHandler('have_file', A.haveFile);
 };
 
 /**
@@ -118,6 +119,15 @@ A.requestMessagesHistory = function(){
  */
 A.lastMessages = function(data){
     A.iface.refreshMessages(data.messages);
+}
+
+A.sendFile = function(fname, fdata){
+    A.socket.send('send_file', {fname:fname, fdata: fdata,to:A.selected_user});
+}
+
+A.haveFile = function(data){
+    var note = ['User ', data.from, ' send for you file ', data.fname, ' size: ', data.fsize].join('');
+    A.iface.showNote(note);
 }
 
 

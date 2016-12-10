@@ -3,7 +3,7 @@ var I = {};
 I.app = null;
 I.messages = [];
 I.MAX_MESSAGES_LEN = 500;
-I.NOTE_TIME = 5000; /*время показа заметки*/
+I.NOTE_TIME = 30000; /*время показа заметки*/
 I.timeout = null;
 I.HISTORY_LEFTTIME = 48; /*длина истории сообщений в часах*/
 
@@ -15,14 +15,38 @@ I.init = function(app){
     I.app = app;
     I.initElements();
     I.setInterfaceHandlers();
-    console.log(I);
+    if (!I.app.files.FILE_API){
+        I.showNote('You browser does not supported File API!');
+        I.hideElem('files_wrap');
+    }
     I.showMessages();
     if (window.localStorage) I.app.selected_user = window.localStorage.getItem('selected_user');
 };
 
 
 I.test = function(){
-    I.showNote('test message');
+    //I.showNote('test message');
+    console.log(F.choosen_files);
+    for (var i = 0,f; f = F.choosen_files[i]; i++){
+        //console.log();
+        F.readFile(f, function(f, data){
+            console.log(f.name);
+            console.log(data);
+            I.app.sendFile(f.name, data);
+        });
+    }
+};
+
+I.sendFiles = function(){
+    console.log(F.choosen_files);
+    for (var i = 0,f; f = F.choosen_files[i]; i++){
+        //console.log();
+        F.readFile(f, function(f, data){
+            console.log(f.name);
+            console.log(data);
+            I.app.sendFile(f.name, data);
+        });
+    }
 };
 
 /**
@@ -43,7 +67,8 @@ I.elements = {
     test: 'test',
     files_list: 'files-list',
     files_input: 'files-input',
-    files_wrap: 'files-wrap'
+    files_wrap: 'files-wrap',
+    send_files_btn: 'send-files-btn'
 };
 
 
@@ -282,6 +307,19 @@ I.handlers = {
     send_btn: {event:'click', handler: I.btnSendHandler},
     exit_btn: {event:'click', handler: I.exit},
     test: {event:'click', handler: I.test},
-    files_input: {event:'change', handler: F.handlerFileSelect}
+    files_input: {event:'change', handler: F.handlerFileSelect},
+    send_files_btn: {event:'click', handler: I.sendFiles}
+};
+
+I.hideElem = function(el){
+    if (I[el] != null && I[el] != undefined){
+        I[el].style.display = 'none';
+    }
+};
+
+I.showElem = function(el){
+    if (I[el] != null && I[el] != undefined){
+        I[el].style.display = 'block';
+    }
 };
 
