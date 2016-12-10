@@ -1,2 +1,3 @@
 #! /bin/sh
-./server.sh &
+cd /var/www/vhosts/chat1
+./server.js &
