@@ -13,32 +13,64 @@ I.HISTORY_LEFTTIME = 48; /*длина истории сообщений в ча�
  */
 I.init = function(app){
     I.app = app;
-    I.messages_block = document.getElementById('messages');
-    I.note_block = document.getElementById('note');
-    I.note_text = document.getElementById('note-text');
-    I.note_close = document.getElementById('note-close');
-    if (I.note_close != null) I.note_close.onclick = I.hideNote;
-    I.input = document.getElementById('input');
-    I.send_btn = document.getElementById('send-btn');
-    I.nicname = document.getElementById('nicname');
-    I.clear_btn = document.getElementById('clear-btn');
-    I.send_btn.onclick = I.btnSendHandler;
-    I.exit_btn = document.getElementById('exit-btn');
-    I.user_for_chat = document.getElementById('user-for-chat');
-    if (I.exit_btn != null) I.exit_btn.onclick = I.exit;
-    window.onkeypress = I.keyPressHandler;
+    I.initElements();
+    I.setInterfaceHandlers();
+    console.log(I);
     I.showMessages();
-    if (I.messages_block != null) I.messages_block.scrollTop = 9999;
-    if (I.nicname != null) I.app.nicname = I.nicname.innerHTML;
-    I.list_users_online = document.getElementById('users-online');
     if (window.localStorage) I.app.selected_user = window.localStorage.getItem('selected_user');
-    document.getElementById('test').onclick = I.test;
 };
 
 
 I.test = function(){
     I.showNote('test message');
 };
+
+/**
+ * Список элементов интерфейса
+ */
+I.elements = {
+    messages_block: 'messages',
+    note_block: 'note',
+    note_text: 'note-text',
+    note_close: 'note-close',
+    input: 'input',
+    send_btn: 'send-btn',
+    exit_btn: 'exit-btn',
+    nicname: 'nicname',
+    clear_btn: 'clear-btn',
+    user_for_chat: 'user-for-chat',
+    list_users_online: 'users-online',
+    test: 'test',
+    files_list: 'files-list',
+    files_input: 'files-input',
+    files_wrap: 'files-wrap'
+};
+
+
+/**
+ * инициализация элементов интерфейса
+ */
+I.initElements = function(){
+    for (var name in I.elements){
+        I[name] = document.getElementById(I.elements[name]);
+    }
+    if (I.messages_block != null) I.messages_block.scrollTop = 9999;
+    if (I.nicname != null) I.app.nicname = I.nicname.innerHTML;
+};
+
+/**
+ * установка обработчиков событий элементов интерфейса
+ */
+I.setInterfaceHandlers = function(){
+    for (var el in I.handlers){
+        if (I[el] != null && I[el] != undefined){
+            I[el].addEventListener(I.handlers[el]['event'], I.handlers[el]['handler'], false);
+        }
+    }
+    window.onkeypress = I.keyPressHandler;
+};
+
+
 
 /**
  * добавление сообщения в список сообщений
@@ -220,9 +252,36 @@ I.hideNote = function(){
     I.note_block.style.display = 'none';
 };
 
-
+/**
+* преобразование timestamp в строку даты-времени
+*/
 I.timestamp2date = function(timestamp){
     var date = new Date(timestamp);
     return date.toLocaleString();
+};
+
+/**
+ * заполнение списка выбранных файловs
+ * @param list массив параметров фалов
+ * @param el елемент DOM куда выводить
+ */
+I.fillFilesList = function(list) {
+    var html = ['<table><tr><th>Name</th><th>Type</th><th>Size</th></tr>'];
+    for (var i =0; i < list.length; i++){
+        html.push('<tr>','<td>', list[i][0], '</td>', '<td>', list[i][1], '</td>', '<td>', list[i][2], '</td>', '</tr>');
+    }
+    html.push('</table>')
+    if (I.files_list != null) I.files_list.innerHTML = html.join('');
+}
+
+/**
+ * Список обработчиков
+ */
+I.handlers = {
+    note_close: {event:'click', handler: I.hideNote },
+    send_btn: {event:'click', handler: I.btnSendHandler},
+    exit_btn: {event:'click', handler: I.exit},
+    test: {event:'click', handler: I.test},
+    files_input: {event:'change', handler: F.handlerFileSelect}
 };
 

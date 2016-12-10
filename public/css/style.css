@@ -187,3 +187,9 @@ ul.messages-list
     margin-top: -23px;
     margin-left: -175px;
 }
+
+.files
+{
+    border: 1px solid grey;
+    border-radius: 5px;
+}

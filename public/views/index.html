@@ -3,6 +3,7 @@
 {% block js %}
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="/js/socket.js"></script>
+    <script type="text/javascript" src="/js/files.js"></script>
     <script type="text/javascript" src="/js/iface.js"></script>
     <script type="text/javascript" src="/js/app.js"></script>
     <script type="text/javascript" src="/js/index.js"></script>
@@ -19,5 +20,6 @@
     </div>
     <div class="cls"></div>
         {% include 'note.html' %}
+    {% include 'files.html' %}
 </div>
 {% endblock %}

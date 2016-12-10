@@ -9,6 +9,8 @@ A.init = function(){
     A.socket = Socket;
     A.io = io;
     A.socket.init(A);
+    A.files = F;
+    A.files.init(A);
     A.iface = I;
     A.iface.init(A);
     A.setEventHandlers();
@@ -18,7 +20,7 @@ A.init = function(){
 /**
  * Установка обработчиков на события рассылаемые сервером
  **/
-A.setEventHandlers = function(){
+A.setEventHandlers= function(){
     A.socket.setEventHandler('connect', A.connect);
     A.socket.setEventHandler('disconnect', A.disconnect);
     A.socket.setEventHandler('new_message', A.newMessage);
