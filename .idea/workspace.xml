@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="aad660e7-5c7c-4951-8d01-86c533b58de6" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/server.sh" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/readme.md" afterPath="$PROJECT_DIR$/readme.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server.js" afterPath="$PROJECT_DIR$/server.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/start" afterPath="$PROJECT_DIR$/start" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/readme.md" afterPath="$PROJECT_DIR$/readme.txt" />
     </list>
     <ignored path="chat1.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -79,8 +75,8 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="readme.md" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/readme.md">
+      <file leaf-file-name="readme.txt" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/readme.txt">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
               <first_editor relative-caret-position="468">
@@ -356,12 +352,12 @@
       <workItem from="1480882115348" duration="1335000" />
       <workItem from="1480931297143" duration="14031000" />
       <workItem from="1481315531591" duration="1601000" />
-      <workItem from="1481358023234" duration="4139000" />
+      <workItem from="1481358023234" duration="4289000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="70222000" />
+    <option name="totallyTimeSpent" value="70372000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="24" width="1920" height="1032" extended-state="0" />
@@ -778,7 +774,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/readme.md">
+    <entry file="file://$PROJECT_DIR$/readme.txt">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="468">
