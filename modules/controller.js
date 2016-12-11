@@ -44,24 +44,43 @@ function newUser(req,res){
 }
 
 /**
-* обработчик GET запроса на '/chat/:nicname'
+* обработчик GET запроса на '/file/:secret'
 **/
-function chat(req, res){
-    var nicname = req.params.nicname;
-    var userlist = global.chat.getUsersOnline();
-    global.io.of('/chat' + nicname).on('connection', function(socket){
-        Handler.user_connect(socket, chat);
-        Handler.user_disconnect(socket, chat);
-        Handler.user_message(socket, chat);
-    });
-    res.render('chat', {nicname:nicname, userlist:userlist});
+function download_file(req, res){
+    var secret = req.params.secret;
+    var file_meta = global.chat.getFileMetadataBySecret(secret);
+    if (file_meta != null){
+        var path = global.chat.USERS_FILES_DIR + '/' + file_meta.encname;
+        res.sendFile(path);
+        res.redirect('/');
+        res.end();
+    }else{
+        res.redirect('/');
+        res.end();
+    }
+}
 
+/**
+ * обработчик GET запроса на '/file-del/:secret'
+ **/
+function remove_file(req, res){
+    var secret = req.params.secret;
+    var file_meta = global.chat.getFileMetadataBySecret(secret);
+    if (file_meta != null){
+        var path = global.chat.USERS_FILES_DIR + '/' + file_meta.encname;
+        res.sendfile(path);
+        res.end();
+    }else{
+        res.redirect('/');
+        res.end;
+    }
 }
 
 
 
 exports.index = index;
-exports.chat = chat;
+exports.download_file = download_file;
+exports.remove_file = remove_file;
 exports.choosenicname = choosenicname;
 exports.newUser = newUser;
 

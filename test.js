@@ -3,8 +3,8 @@
  */
 var fs = require('fs');
 var filename = 'readme.txt';
+var md5 = require('./modules/md5');
 
 
-fs.stat(filename, function(err, info){
-    console.log(info);
-});
+var s = 'admin';
+console.log(md5(s));

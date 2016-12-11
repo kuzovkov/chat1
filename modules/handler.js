@@ -56,6 +56,14 @@ function send_file(socket, chat){
     });
 }
 
+function request_files(socket, chat){
+    socket.on('request_files', function(data){
+        var nicname = chat.getNicname(socket.id);
+        var files_meta = chat.getFilesMetadataByNicname(nicname);
+        socket.emit('you_files', {files: files_meta});
+    });
+}
+
 
 
 exports.user_connect = user_connect;
@@ -63,3 +71,4 @@ exports.user_disconnect = user_disconnect;
 exports.user_message = user_message;
 exports.message_history = message_history;
 exports.send_file = send_file;
+exports.request_files = request_files;

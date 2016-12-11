@@ -1,5 +1,6 @@
 var base64 = require('./base64');
 var fs = require('fs');
+var md5 = require('./md5');
 
 var Chat = {};
 
@@ -7,8 +8,8 @@ Chat.users = {}; /*объект для хранения ников и id сок�
 Chat.messages = []; /*массив для хранения сообщений*/
 Chat.MAX_COUNT_MESS = 1000; /*максимальное количество хранимых сообщений*/
 Chat.MSEC_IN_HOUR = 3600000; /*миллисекунд в часах*/
-Chat.files = []; /*массив для хранения файлов*/
-Chat.USERS_FILES_DIR = 'users_files'; /*каталог персылаемых файлов*/
+Chat.files_meta = []; /*массив для хранения метаданных файлов*/
+Chat.USERS_FILES_DIR = 'users_files'; /*каталог пересылаемых файлов*/
 
 /**
  * добавление нового пользователя к чату
@@ -132,21 +133,73 @@ Chat.getLastMessages = function(user1, user2, lefttime){
  * @param callback функция обратного вызова в которую передается результат
  */
 Chat.saveFile = function(from, to, fname, fdata, callback){
-    var filename = Chat.USERS_FILES_DIR + '/' + base64.base64_encode(fname);
+    var encname = base64.base64_encode(fname);
+    var filename = Chat.USERS_FILES_DIR + '/' + encname;
     var data = new Buffer(fdata, 'base64');
+
     fs.writeFile(filename, data, function(err){
         if (!err){
             fs.stat(filename, function(err, info){
                 var timestamp = (new Date()).getTime();
-                Chat.files.push({from:from, to:to, fname: fname, created: timestamp, fsize:info['size']});
-                callback(info['size']);
+                var fsize = info['size'];
+                var secret = md5([from, to, encname, fsize].join(''));
+                if (!Chat.isFileMetadataExists(from, to, encname, fsize)){
+                    Chat.files_meta.push({from:from, to:to, origname: fname, encname: encname, created: timestamp, fsize:fsize, secret: secret});
+                }
+                callback(fsize);
             });
         }else{ console.log(err);}
     });
-
-
-
 }
+
+/**
+ * есть ли уже запись с такими метаданными
+ * @param from
+ * @param to
+ * @param encname
+ * @param fsize
+ * @returns {boolean}
+ */
+Chat.isFileMetadataExists = function(from, to, encname, fsize){
+    for(var i = 0; i < Chat.files_meta; i++){
+        if (Chat.files_meta[i]['from'] == from &&
+            Chat.files_meta[i]['to'] == to &&
+            Chat.files_meta[i]['encname'] == encname &&
+            Chat.files_meta[i]['fsize'] == fsize) return true;
+    }
+    return false;
+};
+
+/**
+ * получение метаданных файлов для юзера с заданным Nicname
+ * @param nicname
+ * @returns {Array}
+ */
+Chat.getFilesMetadataByNicname = function(nicname){
+    var res = [];
+    for (var i = 0; i < Chat.files_meta.length; i++){
+        if (Chat.files_meta[i]['to'] == nicname){
+            res.push(Chat.files_meta[i]);
+        }
+    }
+    return res;
+};
+
+/**
+ * получение метаданных файла с заланным secret
+ * @param secret
+ * @returns file_metadata
+ */
+Chat.getFileMetadataBySecret = function(secret){
+    for (var i = 0; i < Chat.files_meta.length; i++){
+        if (Chat.files_meta[i]['secret'] == secret){
+            return Chat.files_meta[i];
+        }
+    }
+    return null;
+};
+
+
 
 
 exports.addUser = Chat.addUser;
@@ -158,3 +211,6 @@ exports.getSocketId = Chat.getSocketId;
 exports.addMessage = Chat.addMessage;
 exports.getLastMessages = Chat.getLastMessages;
 exports.saveFile = Chat.saveFile;
+exports.getFilesMetadataByNicname = Chat.getFilesMetadataByNicname;
+exports.getFileMetadataBySecret = Chat.getFileMetadataBySecret;
+exports.USERS_FILES_DIR = Chat.USERS_FILES_DIR;

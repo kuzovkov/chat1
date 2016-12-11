@@ -6,73 +6,7 @@ I.MAX_MESSAGES_LEN = 500;
 I.NOTE_TIME = 30000; /*время показа заметки*/
 I.timeout = null;
 I.HISTORY_LEFTTIME = 48; /*длина истории сообщений в часах*/
-I.CHAT_ENABLE = false; /*доступла ли отправка сообщений*/
-
-/**
- * инициализация объекта интерфейса
- * @param app
- */
-I.init = function(app){
-    I.app = app;
-    I.initElements();
-    I.setInterfaceHandlers();
-    if (!I.app.files.FILE_API){
-        I.files_wrap.innerHTML = ('<p>You browser does not supported File API</p>');
-        //I.hideElem('files_wrap');
-    }
-    I.showMessages();
-    if (window.localStorage) I.app.selected_user = window.localStorage.getItem('selected_user');
-};
-
-
-I.test = function(){
-    //I.showNote('test message');
-    console.log(F.choosen_files);
-    for (var i = 0,f; f = F.choosen_files[i]; i++){
-        //console.log();
-        F.readFile(f, function(f, data){
-            console.log(f.name);
-            console.log(data);
-            I.app.sendFile(f.name, data);
-        });
-    }
-};
-
-/**
- * отправка выбранных файлов на сервер
- */
-I.sendFiles = function(){
-    if (!I.CHAT_ENABLE) return;
-    //console.log(F.choosen_files);
-    I.showElem(I.files_preload);
-    I.files_list.innerHTML = '';
-    for (var i = 0,f; f = F.choosen_files[i]; i++){
-        console.log(f);
-        F.readFile(f, function(f, data){
-            //console.log(f.name);
-            //console.log(data);
-            I.app.sendFile(f.name, data);
-        });
-    }
-    I.files_input.value = null;
-};
-
-
-/**
- * обработка сообщения от сервера что отправленный файл принят
- * @param to
- * @param fname
- */
-I.fileAccepted = function(to, fname){
-    I.hideElem(I.files_preload);
-    var note = ['File ', fname, ' to user ', to, ' was send'].join('');
-    //I.showNote(note);
-    var p = document.createElement('p');
-    p.innerHTML = note;
-    console.log(p);
-    I.files_list.appendChild(p);
-    console.log(I.files_list);
-};
+I.CHAT_ENABLE = false; /*доступна ли отправка сообщений*/
 
 /**
  * Список элементов интерфейса
@@ -94,7 +28,100 @@ I.elements = {
     files_input: 'files-input',
     files_wrap: 'files-wrap',
     send_files_btn: 'send-files-btn',
-    files_preload: 'files-preload'
+    files_preload: 'files-preload',
+    incoming_files: 'incoming-files'
+};
+
+/**
+ * инициализация объекта интерфейса
+ * @param app
+ */
+I.init = function(app){
+    I.app = app;
+    I.initElements();
+    I.setInterfaceHandlers();
+    if (!I.app.files.FILE_API){
+        I.files_wrap.innerHTML = ('<p>You browser does not supported File API</p>');
+        //I.hideElem('files_wrap');
+    }
+    I.showMessages();
+    if (window.localStorage) I.app.selected_user = window.localStorage.getItem('selected_user');
+};
+
+/**
+ * тестовая функция
+ */
+I.test = function(){
+
+};
+
+/**
+ * отправка выбранных файлов на сервер
+ */
+I.sendFiles = function(){
+    if (!I.CHAT_ENABLE) return;
+    //console.log(F.choosen_files);
+    I.showElem(I.files_preload);
+    I.files_list.innerHTML = '';
+    for (var i = 0,f; f = F.choosen_files[i]; i++){
+        console.log(f);
+        F.readFile(f, function(f, data){
+            //console.log(f.name);
+            //console.log(data);
+            I.app.sendFile(f.name, data);
+        });
+    }
+    I.files_input.value = null;
+};
+
+/**
+ * заполнение списка выбранных для отправки файлов
+ * @param list массив параметров фалов
+ * @param el елемент DOM куда выводить
+ */
+I.fillFilesList = function(list) {
+    if (list.length == 0){
+        if (I.files_list != null) I.files_list.innerHTML = '';
+        return;
+    }
+    var html = ['<table><tr><th>Name</th><th>Type</th><th>Size</th><th>Sended</th></tr>'];
+    for (var i =0; i < list.length; i++){
+        html.push('<tr>','<td>', list[i][0], '</td>', '<td>', list[i][1], '</td>', '<td>', list[i][2], '</td>', '<td>', list[i][3], '</td>', '</tr>');
+    }
+    html.push('</table>')
+    if (I.files_list != null) I.files_list.innerHTML = html.join('');
+}
+
+/**
+ * обновление списка ссылок на присланные файлы
+ * @param data
+ */
+I.refreshFilesLinks = function(data){
+    var html = [];
+    for (var i = 0; i < data.files.length; i++){
+        var fname = data.files[i].origname;
+        var secret = data.files[i].secret;
+        html.push(['<li><a href="/file/', secret, '" title="Download">', fname, '</a>&nbsp;<a title="Delete" href="/file-del/', secret,'">'].join(''));
+        html.push(['delete</a></li>'].join(''));
+    }
+    I.incoming_files.innerHTML = html.join('');
+};
+
+
+/**
+ * обработка сообщения от сервера что отправленный файл принят
+ * @param to
+ * @param fname
+ */
+I.fileAccepted = function(to, fname){
+    I.hideElem(I.files_preload);
+    var note = ['File ', fname, ' to user ', to, ' was send'].join('');
+    //I.showNote(note);
+    var p = document.createElement('p');
+    p.innerHTML = note;
+    console.log(p);
+    I.files_list.appendChild(p);
+    console.log(I.files_list);
 };
 
 
@@ -317,23 +344,6 @@ I.timestamp2date = function(timestamp){
     return date.toLocaleString();
 };
 
-/**
- * заполнение списка выбранных файлов
- * @param list массив параметров фалов
- * @param el елемент DOM куда выводить
- */
-I.fillFilesList = function(list) {
-    if (list.length == 0){
-        if (I.files_list != null) I.files_list.innerHTML = '';
-        return;
-    }
-    var html = ['<table><tr><th>Name</th><th>Type</th><th>Size</th><th>Sended</th></tr>'];
-    for (var i =0; i < list.length; i++){
-        html.push('<tr>','<td>', list[i][0], '</td>', '<td>', list[i][1], '</td>', '<td>', list[i][2], '</td>', '<td>', list[i][3], '</td>', '</tr>');
-    }
-    html.push('</table>')
-    if (I.files_list != null) I.files_list.innerHTML = html.join('');
-}
 
 /**
  * Список обработчиков

@@ -30,6 +30,7 @@ A.setEventHandlers= function(){
     A.socket.setEventHandler('last_messages', A.lastMessages);
     A.socket.setEventHandler('have_file', A.haveFile);
     A.socket.setEventHandler('file_accepted', A.fileAccepted);
+    A.socket.setEventHandler('you_files', A.incomingFiles);
 };
 
 /**
@@ -121,16 +122,27 @@ A.requestMessagesHistory = function(){
  */
 A.lastMessages = function(data){
     A.iface.refreshMessages(data.messages);
-}
+    A.requestFiles();
+};
 
+/**
+ * отправка файла на сервер
+ * @param fname
+ * @param fdata
+ */
 A.sendFile = function(fname, fdata){
     A.socket.send('send_file', {fname:fname, fdata: base64_encode(fdata),to:A.selected_user});
-}
+};
 
+/**
+ * обработка сообщения от сервера что нам передали файлы
+ * @param data
+ */
 A.haveFile = function(data){
     var note = ['User ', data.from, ' send for you file ', data.fname, ' size: ', data.fsize].join('');
     A.iface.showNote(note);
-}
+    A.requestFiles();
+};
 
 /**
  * обработка сообщения от сервера что отправленный файл принят
@@ -140,4 +152,19 @@ A.fileAccepted = function(data){
     A.files.fileAccepted(data.fname);
 };
 
+/**
+ * запрос имеющихся присланных файлов
+ */
+A.requestFiles = function(){
+    A.socket.send('request_files');
+};
+
+
+/**
+ * обработка данных от сервера об имеющихся файлах
+ * @param data
+ */
+A.incomingFiles = function(data){
+    A.iface.refreshFilesLinks(data);
+};
 

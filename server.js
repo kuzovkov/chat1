@@ -31,10 +31,12 @@ app.use(express.static(__dirname+'/public'));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-/*основной маршрут*/
+/*обработка запросов маршрут*/
 app.get('/', controller.index );
 app.get('/choosenicname', controller.choosenicname);
 app.post('/choosenicname', controller.newUser);
+app.get('/file/:secret', controller.download_file);
+app.get('/file-del/:secret', controller.remove_file);
 
 
 io.on('connection', function(socket){
@@ -43,5 +45,6 @@ io.on('connection', function(socket){
     Handler.user_message(socket, chat);
     Handler.message_history(socket, chat);
     Handler.send_file(socket, chat);
+    Handler.request_files(socket, chat);
 });
 
