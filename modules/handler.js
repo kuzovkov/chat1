@@ -51,6 +51,7 @@ function send_file(socket, chat){
         var adresat_id = chat.getSocketId(data.to);
         chat.saveFile(from, data.to, data.fname, data.fdata, function(fsize){
             socket.broadcast.to(adresat_id).emit('have_file', {from: from, fname: data.fname, fsize: fsize});
+            socket.emit('file_accepted', {to: data.to, fname: data.fname});
         });
     });
 }

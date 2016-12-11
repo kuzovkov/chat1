@@ -6,6 +6,7 @@ I.MAX_MESSAGES_LEN = 500;
 I.NOTE_TIME = 30000; /*время показа заметки*/
 I.timeout = null;
 I.HISTORY_LEFTTIME = 48; /*длина истории сообщений в часах*/
+I.CHAT_ENABLE = false; /*доступла ли отправка сообщений*/
 
 /**
  * инициализация объекта интерфейса
@@ -16,8 +17,8 @@ I.init = function(app){
     I.initElements();
     I.setInterfaceHandlers();
     if (!I.app.files.FILE_API){
-        I.showNote('You browser does not supported File API!');
-        I.hideElem('files_wrap');
+        I.files_wrap.innerHTML = ('<p>You browser does not supported File API</p>');
+        //I.hideElem('files_wrap');
     }
     I.showMessages();
     if (window.localStorage) I.app.selected_user = window.localStorage.getItem('selected_user');
@@ -37,7 +38,11 @@ I.test = function(){
     }
 };
 
+/**
+ * отправка выбранных файлов на сервер
+ */
 I.sendFiles = function(){
+    if (!I.CHAT_ENABLE) return;
     console.log(F.choosen_files);
     for (var i = 0,f; f = F.choosen_files[i]; i++){
         //console.log();
@@ -113,6 +118,7 @@ I.addMessage = function(message){
  * обработка нажатия кнопки Send
  */
 I.btnSendHandler = function(){
+    if (!I.CHAT_ENABLE) return;
     I.app.sendUserMessage(I.input.value);
     I.input.value = '';
 };
@@ -128,7 +134,7 @@ I.keyPressHandler = function(e){
 };
 
 /**
- * обновление истории сообщений
+ * обновление истории сообщений при получении ее от серовера
  * @param messages
  */
 I.refreshMessages = function(messages){
@@ -137,9 +143,9 @@ I.refreshMessages = function(messages){
 };
 
 /**
- * обновление истории сообщений в соответствии с выбранныи пользователем
+ * запрос истории сообщений у сервера в соответствии с выбранныи пользователем
  */
-I.switchUser = function(){
+I.requestHistory = function(){
     if (I.messages_block == null) return;
     I.messages_block.innerHTML = '<img src="/img/preload.gif" class="preload"/>';
     I.app.requestMessagesHistory();
@@ -221,7 +227,12 @@ I.refreshUsersOnline = function(user_list){
         list[i].addEventListener('click', I.selectUser);
     }
     if (I.user_for_chat != null) I.user_for_chat.innerHTML = I.app.selected_user;
-    I.switchUser();
+    if (I.app.selected_user != null){
+        I.chat_enable(true);
+    }else{
+        I.chat_enable(false);
+    }
+    I.requestHistory();
 };
 
 /**
@@ -251,7 +262,7 @@ I.selectUser = function(e){
         window.localStorage.setItem('selected_user', this.id.split('-').pop());
     }
     if (I.user_for_chat != null) I.user_for_chat.innerHTML = I.app.selected_user;
-    I.switchUser();
+    I.requestHistory();
 };
 
 /**
@@ -311,15 +322,37 @@ I.handlers = {
     send_files_btn: {event:'click', handler: I.sendFiles}
 };
 
+/**
+ * сокрытие элемента интерфейса
+ * @param el
+ */
 I.hideElem = function(el){
     if (I[el] != null && I[el] != undefined){
         I[el].style.display = 'none';
     }
 };
 
+/**
+ * показ элемента интерфейса
+ * @param el элемент заданный строкой имени
+ */
 I.showElem = function(el){
     if (I[el] != null && I[el] != undefined){
         I[el].style.display = 'block';
+    }
+};
+
+/**
+ * управление состоянием чата (true-включен, false-выключен)
+ * @param status
+ */
+I.chat_enable = function(status){
+    I.CHAT_ENABLE = status;
+    if (status){
+        if (I.input.hasAttribute('disabled'))
+            I.input.removeAttribute('disabled');
+    }else{
+        I.input.disabled = true;
     }
 };
 

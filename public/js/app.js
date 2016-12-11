@@ -29,6 +29,7 @@ A.setEventHandlers= function(){
     A.socket.setEventHandler('users_online', A.refreshUsersOnline);
     A.socket.setEventHandler('last_messages', A.lastMessages);
     A.socket.setEventHandler('have_file', A.haveFile);
+    A.socket.setEventHandler('file_accepted', A.fileAccepted);
 };
 
 /**
@@ -51,6 +52,7 @@ A.disconnect = function(){
  * @param message
  */
 A.sendUserMessage = function(message){
+    if (A.selected_user == null) return;
     A.socket.send('user_message', {message: message, to:A.selected_user});
 };
 
@@ -129,5 +131,13 @@ A.haveFile = function(data){
     var note = ['User ', data.from, ' send for you file ', data.fname, ' size: ', data.fsize].join('');
     A.iface.showNote(note);
 }
+
+/**
+ * обработка сообщения от сервера что отправленный файл принят
+ */
+A.fileAccepted = function(data){
+    A.iface.fileAccepted(data.to, data.fname);
+    A.files.fileAccepted(data.fname);
+};
 
 

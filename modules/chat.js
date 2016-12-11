@@ -8,6 +8,7 @@ Chat.messages = []; /*массив для хранения сообщений*/
 Chat.MAX_COUNT_MESS = 1000; /*максимальное количество хранимых сообщений*/
 Chat.MSEC_IN_HOUR = 3600000; /*миллисекунд в часах*/
 Chat.files = []; /*массив для хранения файлов*/
+Chat.USERS_FILES_DIR = 'users_files'; /*каталог персылаемых файлов*/
 
 /**
  * добавление нового пользователя к чату
@@ -122,17 +123,30 @@ Chat.getLastMessages = function(user1, user2, lefttime){
     return messages;
 }
 
+/**
+ * запись пересылаемого файла
+ * @param from от кого
+ * @param to кому
+ * @param fname имя файла
+ * @param fdata тело файла
+ * @param callback функция обратного вызова в которую передается результат
+ */
 Chat.saveFile = function(from, to, fname, fdata, callback){
-    var filename = base64.base64_encode(fname);
-    fs.writeFile(filename, fdata, function(err){
+    var filename = Chat.USERS_FILES_DIR + '/' + base64.base64_encode(fname);
+    var fd = fs.open(filename, 'w', function(err,fd){
         if (!err){
-            fs.stat(filename, function(err, info){
-                var timestamp = (new Date()).getTime();
-                Chat.files.push({from:from, to:to, fname: fname, created: timestamp, fsize:info['size']});
-                callback(info['size']);
+            fs.write(fd, fdata, function(err){
+                if (!err){
+                    fs.stat(filename, function(err, info){
+                        var timestamp = (new Date()).getTime();
+                        Chat.files.push({from:from, to:to, fname: fname, created: timestamp, fsize:info['size']});
+                        callback(info['size']);
+                    });
+                }
             });
         }
     });
+
 }
 
 
