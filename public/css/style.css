@@ -202,3 +202,15 @@ ul.messages-list
     top: 0;
     height: 100%;
 }
+
+#files-preload
+{
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -20px;
+    margin-left: -20px;
+    display: none;
+}

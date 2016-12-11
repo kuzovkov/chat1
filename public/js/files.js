@@ -27,12 +27,13 @@ F.init = function(app){
  * @param ev
  */
 F.handlerFileSelect = function(ev){
+
     var files = ev.target.files;
     F.choosen_files = files;
+    console.log(F.choosen_files);
     var output = [];
-    for (var i =0,f; f = files[i]; i++){
-        output.push([escape(f.name), f.type || 'n/a', f.size]);
-        filename = f.name;
+    for (var i = 0,f; f = files[i]; i++){
+        output.push([escape(f.name), f.type || 'n/a', f.size, 'no']);
     }
     F.app.iface.fillFilesList(output);
 };
@@ -50,4 +51,20 @@ F.readFile = function(f, callback){
     };
     reader.readAsBinaryString(f);
 };
+
+/**
+ * обработка сообщения от сервера что файл принят
+ * @param fname
+ */
+F.fileAccepted = function(fname){
+    var output = [];
+    for (var i =0,f; f = F.choosen_files[i]; i++){
+        if (f.name == fname){
+            output.push([escape(f.name), f.type || 'n/a', f.size, 'yes']);
+        }else{
+            output.push([escape(f.name), f.type || 'n/a', f.size, 'no']);
+        }
+    }
+    F.app.iface.fillFilesList(output);
+}
 

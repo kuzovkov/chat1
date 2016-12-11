@@ -43,15 +43,35 @@ I.test = function(){
  */
 I.sendFiles = function(){
     if (!I.CHAT_ENABLE) return;
-    console.log(F.choosen_files);
+    //console.log(F.choosen_files);
+    I.showElem(I.files_preload);
+    I.files_list.innerHTML = '';
     for (var i = 0,f; f = F.choosen_files[i]; i++){
-        //console.log();
+        console.log(f);
         F.readFile(f, function(f, data){
-            console.log(f.name);
-            console.log(data);
+            //console.log(f.name);
+            //console.log(data);
             I.app.sendFile(f.name, data);
         });
     }
+    I.files_input.value = null;
+};
+
+
+/**
+ * обработка сообщения от сервера что отправленный файл принят
+ * @param to
+ * @param fname
+ */
+I.fileAccepted = function(to, fname){
+    I.hideElem(I.files_preload);
+    var note = ['File ', fname, ' to user ', to, ' was send'].join('');
+    //I.showNote(note);
+    var p = document.createElement('p');
+    p.innerHTML = note;
+    console.log(p);
+    I.files_list.appendChild(p);
+    console.log(I.files_list);
 };
 
 /**
@@ -73,7 +93,8 @@ I.elements = {
     files_list: 'files-list',
     files_input: 'files-input',
     files_wrap: 'files-wrap',
-    send_files_btn: 'send-files-btn'
+    send_files_btn: 'send-files-btn',
+    files_preload: 'files-preload'
 };
 
 
@@ -297,14 +318,18 @@ I.timestamp2date = function(timestamp){
 };
 
 /**
- * заполнение списка выбранных файловs
+ * заполнение списка выбранных файлов
  * @param list массив параметров фалов
  * @param el елемент DOM куда выводить
  */
 I.fillFilesList = function(list) {
-    var html = ['<table><tr><th>Name</th><th>Type</th><th>Size</th></tr>'];
+    if (list.length == 0){
+        if (I.files_list != null) I.files_list.innerHTML = '';
+        return;
+    }
+    var html = ['<table><tr><th>Name</th><th>Type</th><th>Size</th><th>Sended</th></tr>'];
     for (var i =0; i < list.length; i++){
-        html.push('<tr>','<td>', list[i][0], '</td>', '<td>', list[i][1], '</td>', '<td>', list[i][2], '</td>', '</tr>');
+        html.push('<tr>','<td>', list[i][0], '</td>', '<td>', list[i][1], '</td>', '<td>', list[i][2], '</td>', '<td>', list[i][3], '</td>', '</tr>');
     }
     html.push('</table>')
     if (I.files_list != null) I.files_list.innerHTML = html.join('');
@@ -327,18 +352,19 @@ I.handlers = {
  * @param el
  */
 I.hideElem = function(el){
-    if (I[el] != null && I[el] != undefined){
-        I[el].style.display = 'none';
+    if (el != null && el != undefined){
+        el.style.display = 'none';
     }
 };
 
 /**
  * показ элемента интерфейса
- * @param el элемент заданный строкой имени
+ * @param el элемент DOM
  */
 I.showElem = function(el){
-    if (I[el] != null && I[el] != undefined){
-        I[el].style.display = 'block';
+    console.log(el);
+    if (el != null && el != undefined){
+        el.style.display = 'block';
     }
 };
 
@@ -355,4 +381,6 @@ I.chat_enable = function(status){
         I.input.disabled = true;
     }
 };
+
+
 

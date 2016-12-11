@@ -133,19 +133,18 @@ Chat.getLastMessages = function(user1, user2, lefttime){
  */
 Chat.saveFile = function(from, to, fname, fdata, callback){
     var filename = Chat.USERS_FILES_DIR + '/' + base64.base64_encode(fname);
-    var fd = fs.open(filename, 'w', function(err,fd){
+    var data = new Buffer(fdata, 'base64');
+    fs.writeFile(filename, data, function(err){
         if (!err){
-            fs.write(fd, fdata, function(err){
-                if (!err){
-                    fs.stat(filename, function(err, info){
-                        var timestamp = (new Date()).getTime();
-                        Chat.files.push({from:from, to:to, fname: fname, created: timestamp, fsize:info['size']});
-                        callback(info['size']);
-                    });
-                }
+            fs.stat(filename, function(err, info){
+                var timestamp = (new Date()).getTime();
+                Chat.files.push({from:from, to:to, fname: fname, created: timestamp, fsize:info['size']});
+                callback(info['size']);
             });
-        }
+        }else{ console.log(err);}
     });
+
+
 
 }
 

@@ -124,7 +124,7 @@ A.lastMessages = function(data){
 }
 
 A.sendFile = function(fname, fdata){
-    A.socket.send('send_file', {fname:fname, fdata: fdata,to:A.selected_user});
+    A.socket.send('send_file', {fname:fname, fdata: base64_encode(fdata),to:A.selected_user});
 }
 
 A.haveFile = function(data){
