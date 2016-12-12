@@ -6,5 +6,10 @@ var filename = 'readme.txt';
 var md5 = require('./modules/md5');
 
 
-var s = 'admin';
-console.log(md5(s));
+//var s = 'admin';
+//console.log(md5(s));
+
+var fname = fs.realpathSync('readme.txt');
+console.log(fname);
+
+console.log(fs.existsSync(fname));

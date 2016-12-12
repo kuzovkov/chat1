@@ -199,6 +199,23 @@ Chat.getFileMetadataBySecret = function(secret){
     return null;
 };
 
+/**
+ * удаление метаданных файла с заланным secret
+ * @param secret
+ * @returns file_metadata
+ */
+Chat.delFileMetadataBySecret = function(secret){
+    var i = 0;
+    while(i < Chat.files_meta.length){
+        if (Chat.files_meta[i]['secret'] == secret){
+            Chat.files_meta.splice(i,1);
+        }else{
+            i++;
+        }
+    }
+};
+
+
 
 
 
@@ -214,3 +231,4 @@ exports.saveFile = Chat.saveFile;
 exports.getFilesMetadataByNicname = Chat.getFilesMetadataByNicname;
 exports.getFileMetadataBySecret = Chat.getFileMetadataBySecret;
 exports.USERS_FILES_DIR = Chat.USERS_FILES_DIR;
+exports.delFileMetadataBySecret = Chat.delFileMetadataBySecret;

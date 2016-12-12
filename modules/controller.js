@@ -2,6 +2,7 @@
 * модуль обработки http запросов к серверу
 **/
 var fs = require('fs');
+var path = require('path');
 
 
 /**
@@ -50,10 +51,16 @@ function download_file(req, res){
     var secret = req.params.secret;
     var file_meta = global.chat.getFileMetadataBySecret(secret);
     if (file_meta != null){
-        var path = global.chat.USERS_FILES_DIR + '/' + file_meta.encname;
-        res.sendFile(path);
-        res.redirect('/');
-        res.end();
+        var fname = fs.realpathSync(global.chat.USERS_FILES_DIR + path.sep + file_meta.encname);
+        console.log(fname);
+        if (fs.existsSync(fname)){
+            res.header('Content-Disposition', 'attachment; filename=' + file_meta.origname);
+            res.sendFile(fname);
+        }else{
+            console.log('not found');
+            res.redirect('/');
+            res.end();
+        }
     }else{
         res.redirect('/');
         res.end();
@@ -66,14 +73,17 @@ function download_file(req, res){
 function remove_file(req, res){
     var secret = req.params.secret;
     var file_meta = global.chat.getFileMetadataBySecret(secret);
-    if (file_meta != null){
-        var path = global.chat.USERS_FILES_DIR + '/' + file_meta.encname;
-        res.sendfile(path);
-        res.end();
-    }else{
-        res.redirect('/');
-        res.end;
+    if (file_meta != null) {
+        var fname = fs.realpathSync(global.chat.USERS_FILES_DIR + path.sep + file_meta.encname);
+        if (fs.existsSync(fname)) {
+            fs.unlink(fname, function(){
+                global.chat.delFileMetadataBySecret(secret);
+            });
+        }
     }
+    res.redirect('/');
+    res.end();
+
 }
 
 
