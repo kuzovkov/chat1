@@ -7,7 +7,6 @@ Socket.pathname = null;
 Socket.socket = null;
 Socket.hostname = null;
 Socket.app = null;
-Socket.prefix = '/location/';
 
 /**
  * инициализация модуля

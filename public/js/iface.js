@@ -244,13 +244,13 @@ I.reloadPage = function(url){
 };
 
 /**
- * заполнение списка рользовалелей online
+ * заполнение списка пользовалелей online
  * @param user_list
  */
 I.refreshUsersOnline = function(user_list){
     if (I.list_users_online == null) return;
     I.destroyChildren(I.list_users_online);
-    if (user_list.indexOf(I.selected_user) == -1){
+    if (user_list.indexOf(I.app.selected_user) == -1){
         I.app.selected_user = null;
     }
     for (var i = 0; i< user_list.length; i++){
