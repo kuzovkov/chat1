@@ -22,6 +22,7 @@ I.elements = {
     nicname: 'nicname',
     clear_btn: 'clear-btn',
     user_for_chat: 'user-for-chat',
+    user_for_videochat: 'user-for-videochat',
     list_users_online: 'users-online',
     test: 'test',
     files_list: 'files-list',
@@ -29,7 +30,8 @@ I.elements = {
     files_wrap: 'files-wrap',
     send_files_btn: 'send-files-btn',
     files_preload: 'files-preload',
-    incoming_files: 'incoming-files'
+    incoming_files: 'incoming-files',
+    local_video: 'local-video'
 };
 
 /**
@@ -46,6 +48,7 @@ I.init = function(app){
     }
     I.showMessages();
     if (window.localStorage) I.app.selected_user = window.localStorage.getItem('selected_user');
+    I.showLocalVideo();
 };
 
 /**
@@ -275,6 +278,7 @@ I.refreshUsersOnline = function(user_list){
         list[i].addEventListener('click', I.selectUser);
     }
     if (I.user_for_chat != null) I.user_for_chat.innerHTML = I.app.selected_user;
+    if (I.user_for_videochat != null) I.user_for_videochat.innerHTML = I.app.selected_user;
     if (I.app.selected_user != null){
         I.chat_enable(true);
     }else{
@@ -310,6 +314,7 @@ I.selectUser = function(e){
         window.localStorage.setItem('selected_user', this.id.split('-').pop());
     }
     if (I.user_for_chat != null) I.user_for_chat.innerHTML = I.app.selected_user;
+    if (I.user_for_videochat != null) I.user_for_videochat.innerHTML = I.app.selected_user;
     I.requestHistory();
 };
 
@@ -390,6 +395,30 @@ I.chat_enable = function(status){
     }else{
         I.input.disabled = true;
     }
+};
+
+I.showLocalVideo = function(){
+    navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+    if (navigator.getUserMedia) {
+        navigator.getUserMedia({audio: true, video: true}, successCallback, errorCallback);
+    } else {
+        I.local_video.src = 'somevideo.webm'; // fallback.
+    }
+
+    function successCallback(stream){
+        var myURL = window.URL || window.webkitURL;
+        if ( !myURL ){
+            I.local_video.src = stream;
+        }else{
+            I.local_video.src = myURL.createObjectURL(stream);
+        }
+    }
+
+    function errorCallback(error) {
+        I.local_video.innerHTML = "navigator.getUserMedia error: " + error;
+        I.showNote("navigator.getUserMedia error: " + error);
+    }
+
 };
 
 

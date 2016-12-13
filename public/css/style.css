@@ -90,7 +90,7 @@ ul.messages-list
 
 .chat
 {
-    width: 75%;
+    width: 30%;
     height: 700px;
     margin: 10px;
     padding: 0 10px 0 10px;
@@ -240,4 +240,32 @@ ul.messages-list
     top: 5px;
     left: 40px;
     overflow: scroll;
+}
+
+.video-wrap
+{
+    width: 45%;
+    height: 700px;
+    margin: 10px;
+    padding: 0 10px 0 10px;
+    border-radius: 10px;
+    border: 1px solid grey;
+    float: left;
+}
+
+.local-video
+{
+    height: 46%;
+    width: 100%;
+    position: relative;
+}
+
+.local-video video
+{
+    height: 100%;
+    border: 2px solid grey;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
 }

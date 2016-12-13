@@ -6,6 +6,7 @@ Requires: Ubuntu (tested on 14.04), Node.js
 cd /var/www/vhosts
 sudo git clone https://github.com/kuzovkov/chat1.git
 cd chat1
+sudo npm install
 sudo chmod a+x server.js
 sudo chmod a+x start
 sudo chmod a+x stop
