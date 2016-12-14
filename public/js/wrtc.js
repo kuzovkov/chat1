@@ -3,7 +3,7 @@
  */
 var WRTC = {};
 WRTC.default_src = '/video/default.webm';
-WRTC.stream = null;
+WRTC.localStream = null;
 
 
 WRTC.showLocalVideo = function(elVideo, error){
@@ -11,12 +11,12 @@ WRTC.showLocalVideo = function(elVideo, error){
     navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
     if (navigator.getUserMedia) {
         navigator.getUserMedia({audio: true, video: true}, function(stream){
-            WRTC.stream = stream;
+            WRTC.localStream = stream;
             var myURL = window.URL || window.webkitURL;
             if ( !myURL ){
-                elVideo.src = WRTC.stream;
+                elVideo.src = WRTC.localStream;
             }else{
-                elVideo.src = myURL.createObjectURL(WRTC.stream);
+                elVideo.src = myURL.createObjectURL(WRTC.localStream);
             }
         }, errorCallback);
     } else {
@@ -24,15 +24,15 @@ WRTC.showLocalVideo = function(elVideo, error){
     }
 
     function errorCallback(error) {
+        console.log("navigator.getUserMedia error: " + error);
         error("navigator.getUserMedia error: " + error);
     }
-
 };
 
 WRTC.hideLocalVideo = function(elVideo){
     elVideo.src = WRTC.default_src; // fallback.
-    if (WRTC.stream != null){
-        WRTC.stream.getVideoTracks().forEach(function (track) {
+    if (WRTC.localStream != null){
+        WRTC.localStream.getVideoTracks().forEach(function (track) {
             track.stop();
         });
     }
