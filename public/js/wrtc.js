@@ -31,32 +31,11 @@ WRTC.showLocalVideo = function(elVideo, error){
 
 WRTC.hideLocalVideo = function(elVideo){
     elVideo.src = WRTC.default_src; // fallback.
-    if (WRTC != null){
+    if (WRTC.stream != null){
         WRTC.stream.getVideoTracks().forEach(function (track) {
             track.stop();
         });
     }
-    /*
-    var MediaStream = window.MediaStream;
-
-    if (typeof MediaStream === 'undefined' && typeof webkitMediaStream !== 'undefined') {
-        MediaStream = webkitMediaStream;
-    }
-
-    if (typeof MediaStream !== 'undefined' && !('stop' in MediaStream.prototype)) {
-        MediaStream.prototype.stop = function() {
-            this.getAudioTracks().forEach(function(track) {
-                track.stop();
-            });
-
-            this.getVideoTracks().forEach(function(track) {
-                track.stop();
-            });
-        };
-    }
-    */
-
-
 };
 
 

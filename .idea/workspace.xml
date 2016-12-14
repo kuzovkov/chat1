@@ -2,13 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="aad660e7-5c7c-4951-8d01-86c533b58de6" name="Default" comment="">
-      <change type="MOVED" beforePath="$PROJECT_DIR$/public/img/video/default.mp4" afterPath="$PROJECT_DIR$/public/video/default.mp4" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/css/style.css" afterPath="$PROJECT_DIR$/public/css/style.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/iface.js" afterPath="$PROJECT_DIR$/public/js/iface.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/wrtc.js" afterPath="$PROJECT_DIR$/public/js/wrtc.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/views/video.html" afterPath="$PROJECT_DIR$/public/views/video.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/start" afterPath="$PROJECT_DIR$/start" />
     </list>
     <ignored path="chat1.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -43,8 +37,8 @@
       <file leaf-file-name="wrtc.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/public/js/wrtc.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="36">
-              <caret line="4" column="39" selection-start-line="4" selection-start-column="39" selection-end-line="4" selection-end-column="39" />
+            <state relative-caret-position="558">
+              <caret line="33" column="19" selection-start-line="33" selection-start-column="19" selection-end-line="33" selection-end-column="19" />
               <folding>
                 <element signature="e#0#40#0" expanded="false" />
               </folding>
@@ -375,12 +369,12 @@
       <workItem from="1481541818652" duration="7959000" />
       <workItem from="1481636313685" duration="7233000" />
       <workItem from="1481707973805" duration="3796000" />
-      <workItem from="1481714957212" duration="6127000" />
+      <workItem from="1481714957212" duration="6487000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="140548000" />
+    <option name="totallyTimeSpent" value="140908000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="24" width="1922" height="1033" extended-state="6" />
@@ -753,8 +747,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/public/js/wrtc.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="36">
-          <caret line="4" column="39" selection-start-line="4" selection-start-column="39" selection-end-line="4" selection-end-column="39" />
+        <state relative-caret-position="558">
+          <caret line="33" column="19" selection-start-line="33" selection-start-column="19" selection-end-line="33" selection-end-column="19" />
           <folding>
             <element signature="e#0#40#0" expanded="false" />
           </folding>
