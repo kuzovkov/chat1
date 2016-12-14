@@ -2,24 +2,25 @@
  * Created by user1 on 14.12.16.
  */
 var WRTC = {};
-WRTC.default_src = '/video/default.mp4';
+WRTC.default_src = '/video/default.webm';
+WRTC.stream = null;
 
 
 WRTC.showLocalVideo = function(elVideo, error){
+    //navigator.getUserMedia  = false;
     navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
     if (navigator.getUserMedia) {
-        navigator.getUserMedia({audio: true, video: true}, successCallback, errorCallback);
+        navigator.getUserMedia({audio: true, video: true}, function(stream){
+            WRTC.stream = stream;
+            var myURL = window.URL || window.webkitURL;
+            if ( !myURL ){
+                elVideo.src = WRTC.stream;
+            }else{
+                elVideo.src = myURL.createObjectURL(WRTC.stream);
+            }
+        }, errorCallback);
     } else {
         elVideo.src = WRTC.default_src; // fallback.
-    }
-
-    function successCallback(stream){
-        var myURL = window.URL || window.webkitURL;
-        if ( !myURL ){
-            elVideo.src = stream;
-        }else{
-            elVideo.src = myURL.createObjectURL(stream);
-        }
     }
 
     function errorCallback(error) {
@@ -30,12 +31,31 @@ WRTC.showLocalVideo = function(elVideo, error){
 
 WRTC.hideLocalVideo = function(elVideo){
     elVideo.src = WRTC.default_src; // fallback.
-    var myURL = window.URL || window.webkitURL;
-    if ( !myURL ){
-        elVideo.src = stream;
-    }else{
-        elVideo.src = myURL.createObjectURL(stream);
+    if (WRTC != null){
+        WRTC.stream.getVideoTracks().forEach(function (track) {
+            track.stop();
+        });
     }
+    /*
+    var MediaStream = window.MediaStream;
+
+    if (typeof MediaStream === 'undefined' && typeof webkitMediaStream !== 'undefined') {
+        MediaStream = webkitMediaStream;
+    }
+
+    if (typeof MediaStream !== 'undefined' && !('stop' in MediaStream.prototype)) {
+        MediaStream.prototype.stop = function() {
+            this.getAudioTracks().forEach(function(track) {
+                track.stop();
+            });
+
+            this.getVideoTracks().forEach(function(track) {
+                track.stop();
+            });
+        };
+    }
+    */
+
 
 };
 

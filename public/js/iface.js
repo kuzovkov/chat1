@@ -51,14 +51,14 @@ I.init = function(app){
     }
     I.showMessages();
     if (window.localStorage) I.app.selected_user = window.localStorage.getItem('selected_user');
-    I.showLocalVideo();
+    I.toggleLocalVideo();
 };
 
 /**
  * тестовая функция
  */
 I.test = function(){
-
+    console.log(I.toggle_local_video.checked);
 };
 
 /**
@@ -353,18 +353,6 @@ I.timestamp2date = function(timestamp){
 };
 
 
-/**
- * Список обработчиков
- */
-I.handlers = {
-    note_close: {event:'click', handler: I.hideNote },
-    send_btn: {event:'click', handler: I.btnSendHandler},
-    exit_btn: {event:'click', handler: I.exit},
-    test: {event:'click', handler: I.test},
-    files_input: {event:'change', handler: F.handlerFileSelect},
-    send_files_btn: {event:'click', handler: I.sendFiles},
-    toggle_local_video: {event: 'change', handler: I.showLocalVideo}
-};
 
 /**
  * сокрытие элемента интерфейса
@@ -401,7 +389,18 @@ I.chat_enable = function(status){
     }
 };
 
-I.showLocalVideo = function(){
+I.toggleLocalVideo = function(){
+    if (window.localStorage){
+        var on;
+        if ((on = localStorage.getItem('local_video')) != null){
+            I.CAPTURE_LOCAL_VIDEO = JSON.parse(on);
+        }
+    }
+    I.CAPTURE_LOCAL_VIDEO = !I.CAPTURE_LOCAL_VIDEO;
+    if (window.localStorage){
+        localStorage.setItem('local_video', JSON.stringify(I.CAPTURE_LOCAL_VIDEO));
+    }
+    I.toggle_local_video.checked = I.CAPTURE_LOCAL_VIDEO;
     if (I.CAPTURE_LOCAL_VIDEO){
         WRTC.showLocalVideo(I.local_video, function(msg){
             I.showNote(msg);
@@ -417,7 +416,19 @@ I.showLocalVideo = function(){
     }else{
         WRTC.hideLocalVideo(I.local_video);
     }
+};
 
+/**
+ * Список обработчиков
+ */
+I.handlers = {
+    note_close: {event:'click', handler: I.hideNote },
+    send_btn: {event:'click', handler: I.btnSendHandler},
+    exit_btn: {event:'click', handler: I.exit},
+    test: {event:'click', handler: I.test},
+    files_input: {event:'change', handler: F.handlerFileSelect},
+    send_files_btn: {event:'click', handler: I.sendFiles},
+    toggle_local_video: {event: 'change', handler: I.toggleLocalVideo}
 };
 
 
