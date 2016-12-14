@@ -268,4 +268,17 @@ ul.messages-list
     top: 0;
     left: 0;
     display: block;
+
+}
+
+.video-option
+{
+    float:right;
+    width: 160px;
+    padding: 0;
+}
+
+.video-option input
+{
+    float: left;
 }

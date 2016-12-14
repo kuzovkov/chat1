@@ -1,8 +1,14 @@
-<fieldset class="video-wrap">
+<fieldset class="video-wrap" id="video-wrap">
     <legend>Videochat with "<span id="user-for-videochat"></span>"</legend>
     <div class="local-video">
         <video id="local-video" autoplay></video>
+        <div class="video-option">
+            <label>Захватывать видео с камеры</label>&nbsp;<input type="checkbox" id="toggle-local-video" class="video-option"/>
+
+        </div>
     </div>
+
+
     <div class="remote-video">
         <video id="remote-video"></video>
     </div>

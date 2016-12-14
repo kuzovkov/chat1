@@ -7,6 +7,7 @@ I.NOTE_TIME = 30000; /*время показа заметки*/
 I.timeout = null;
 I.HISTORY_LEFTTIME = 48; /*длина истории сообщений в часах*/
 I.CHAT_ENABLE = false; /*доступна ли отправка сообщений*/
+I.CAPTURE_LOCAL_VIDEO = true; /*захватывать ли видео с камеры*/
 
 /**
  * Список элементов интерфейса
@@ -31,7 +32,9 @@ I.elements = {
     send_files_btn: 'send-files-btn',
     files_preload: 'files-preload',
     incoming_files: 'incoming-files',
-    local_video: 'local-video'
+    local_video: 'local-video',
+    video_wrap: 'video-wrap',
+    toggle_local_video: 'toggle-local-video'
 };
 
 /**
@@ -359,7 +362,8 @@ I.handlers = {
     exit_btn: {event:'click', handler: I.exit},
     test: {event:'click', handler: I.test},
     files_input: {event:'change', handler: F.handlerFileSelect},
-    send_files_btn: {event:'click', handler: I.sendFiles}
+    send_files_btn: {event:'click', handler: I.sendFiles},
+    toggle_local_video: {event: 'change', handler: I.showLocalVideo}
 };
 
 /**
@@ -398,25 +402,20 @@ I.chat_enable = function(status){
 };
 
 I.showLocalVideo = function(){
-    navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-    if (navigator.getUserMedia) {
-        navigator.getUserMedia({audio: true, video: true}, successCallback, errorCallback);
-    } else {
-        I.local_video.src = 'somevideo.webm'; // fallback.
-    }
-
-    function successCallback(stream){
-        var myURL = window.URL || window.webkitURL;
-        if ( !myURL ){
-            I.local_video.src = stream;
-        }else{
-            I.local_video.src = myURL.createObjectURL(stream);
-        }
-    }
-
-    function errorCallback(error) {
-        I.local_video.innerHTML = "navigator.getUserMedia error: " + error;
-        I.showNote("navigator.getUserMedia error: " + error);
+    if (I.CAPTURE_LOCAL_VIDEO){
+        WRTC.showLocalVideo(I.local_video, function(msg){
+            I.showNote(msg);
+            var prev = document.getElementById('wrtc-mess');
+            if (prev != null ) I.video_wrap.removeChild(prev);
+            var p = document.createEvent('p');
+            p.textContent = msg;p.id = 'wrtc-mess';
+            p.innerText = msg;
+            p.id = 'wrtc-mess';
+            p.className = 'error';
+            I.video_wrap.appendChild(p);
+        });
+    }else{
+        WRTC.hideLocalVideo(I.local_video);
     }
 
 };

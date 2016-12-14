@@ -216,9 +216,6 @@ Chat.delFileMetadataBySecret = function(secret){
 };
 
 
-
-
-
 exports.addUser = Chat.addUser;
 exports.refreshSocketId = Chat.refreshSocketId;
 exports.getNicname = Chat.getNicname;
