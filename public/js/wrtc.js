@@ -18,7 +18,7 @@ WRTC.startCaptureMedia = function(callback){
     WRTC.callback = callback;
     navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
     if (navigator.getUserMedia) {
-        navigator.getUserMedia(WRTC.captureOptions, WRTC.gotStream, WRTC.captureError);
+        navigator.getUserMedia(WRTC.captureOptions, WRTC.gotLocalStream, WRTC.captureError);
     }else{
         WRTC.error = 'Error: getUserMedia does not supported';
     }
@@ -54,39 +54,39 @@ WRTC.captureError = function(error) {
  * обработчик успешного получения потоков
  * @param stream
  */
-WRTC.gotStream = function(stream){
+WRTC.gotLocalStream = function(stream){
     WRTC.error = null;
     WRTC.localStream = stream;
-    WRTC.bindLocalStream();
-    WRTC.setMutedLocal(false);
+    WRTC.attachStream(WRTC.localVideo, WRTC.localStream);
+    WRTC.setMuted(WRTC.localVideo, false);
 };
 
 /**
  * привязка потоков к элементу video
  */
-WRTC.bindLocalStream = function(){
+WRTC.attachStream = function(el, stream){
     var myURL = window.URL || window.webkitURL;
     if ( !myURL ){
-        WRTC.localVideo.src = WRTC.localStream;
+        el.src = stream;
     }else{
-        WRTC.localVideo.src = myURL.createObjectURL(WRTC.localStream);
+        el.src = myURL.createObjectURL(stream);
     }
 };
 
 /**
  * привязка к элементу video видеоролика по умолчанию
  */
-WRTC.unbindLocalStream = function(){
-    WRTC.localVideo.src = WRTC.default_src;
+WRTC.deattachStream = function(el){
+    el.src = WRTC.default_src;
 };
 
 /**
  * включение/выключение звука
  * @param muted
  */
-WRTC.setMutedLocal = function(muted){
-    if (WRTC.localVideo != null && WRTC.localVideo != undefined)
-        WRTC.localVideo.muted = muted;
+WRTC.setMuted = function(el, muted){
+    if (el != null && el != undefined)
+        el.muted = muted;
 };
 
 /**
@@ -105,8 +105,8 @@ WRTC.showLocalVideo = function(el, errorCallback){
 WRTC.hideLocalVideo = function(){
     if (WRTC.localVideo == null) return;
     WRTC.stopCaptureMedia();
-    WRTC.unbindLocalStream();
-    WRTC.setMutedLocal(true);
+    WRTC.deattachStream(WRTC.localVideo);
+    WRTC.setMuted(WRTC.localVideo, true);
 };
 
 
