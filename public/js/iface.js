@@ -414,7 +414,7 @@ I.toggleLocalVideo = function(){
             I.video_wrap.appendChild(p);
         });
     }else{
-        WRTC.hideLocalVideo(I.local_video);
+        WRTC.hideLocalVideo();
     }
 };
 
