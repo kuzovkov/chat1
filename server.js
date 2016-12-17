@@ -1,11 +1,18 @@
 #!/usr/bin/env node
 
 /*сервер*/
+
+var fs = require('fs');
+var options = {
+    key: fs.readFileSync('cert/key.pem'),
+    cert: fs.readFileSync('cert/cert.pem')
+};
 var express = require('express');
 var app = express();
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var server = require('http').Server(app);
+var https = require('https');
+var server = https.createServer(options, app);
 var io = require('socket.io')(server);
 var port = 8000;
 var Helper = require('./modules/helper');
@@ -31,12 +38,13 @@ app.use(express.static(__dirname+'/public'));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-/*обработка запросов маршрут*/
+/*обработка запросов*/
 app.get('/', controller.index );
 app.get('/choosenicname', controller.choosenicname);
 app.post('/choosenicname', controller.newUser);
 app.get('/file/:secret', controller.download_file);
 app.get('/file-del/:secret', controller.remove_file);
+app.get('/test', controller.test);
 
 
 io.on('connection', function(socket){

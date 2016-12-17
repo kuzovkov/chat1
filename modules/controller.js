@@ -88,9 +88,15 @@ function remove_file(req, res){
 
 
 
+function test(req, res){
+    res.render('test');
+}
+
+
 exports.index = index;
 exports.download_file = download_file;
 exports.remove_file = remove_file;
 exports.choosenicname = choosenicname;
 exports.newUser = newUser;
+exports.test = test;
 
