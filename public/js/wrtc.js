@@ -15,6 +15,9 @@ WRTC.init = function(app){
     WRTC.online = false;
     WRTC.hang_up = true; /*повешена ли трубка*/
     WRTC.mediaOptions = { audio: true, video: true };
+    WRTC.selected_user = null; /*абонент для видеочата*/
+    if (window.localStorage)
+        WRTC.selected_user = window.localStorage.getItem('videochat_user');
 };
 
 
@@ -24,6 +27,8 @@ WRTC.init = function(app){
  */
 WRTC.call = function(){
     console.log(Date.now(), 'call');
+    if (!WRTC.hang_up) return;
+    WRTC.setSelectedUser(WRTC.app.selected_user);
     WRTC.hang_up = false;
     WRTC.sendMessage({type:'intent_call'});
     WRTC.app.au.playSound('call.mp3');
@@ -172,9 +177,13 @@ WRTC.gotRemoteStream = function(event){
  * для обеспечения сигналлинга
  * @param message
  */
-WRTC.sendMessage = function(message){
+WRTC.sendMessage = function(message, to){
     console.log(Date.now(), 'send_message: ', message);
-    WRTC.app.socket.send('wrtc_message', {message: message, to: WRTC.app.selected_user});
+    if (to === undefined){
+        WRTC.app.socket.send('wrtc_message', {message: message, to: WRTC.selected_user});
+    }else{
+        WRTC.app.socket.send('wrtc_message', {message: message, to: to});
+    }
 };
 
 /**
@@ -213,6 +222,7 @@ WRTC.disconnect = function(){
     document.getElementById("localVideo").src = '';
     document.getElementById("remoteVideo").src = '';
     WRTC.app.au.stopSound();
+    WRTC.setSelectedUser(null);
 };
 
 /**
@@ -231,7 +241,6 @@ WRTC.gotMessage = function(data){
     var message  = data.message;
     var from = data.from;
     console.log(Date.now(), 'recive_message: ', message);
-    if (WRTC.pc == null)console.log('pc == null');
     if (WRTC.pc != null && message.type === 'offer') {
         WRTC.pc.setRemoteDescription(new SessionDescription(message));
         WRTC.createAnswer();
@@ -257,18 +266,35 @@ WRTC.gotMessage = function(data){
     }else if (message.type === 'intent_call'){
         WRTC.app.au.playSound('call.mp3');
         if (WRTC.confirmAnswer(from)){
+            WRTC.hangup();
+            WRTC.setSelectedUser(from);
             WRTC.sendMessage({type:'ready_call'});
         }else{
-            WRTC.sendMessage({type:'reject_call'});
+            WRTC.sendMessage({type:'reject_call'}, from);
             WRTC.app.au.stopSound();
         }
     }else if (message.type === 'ready_call'){
         WRTC.beginConnect();
     }else if (message.type === 'reject_call'){
         document.getElementById("hangupButton").style.display = 'none';
+        WRTC.setSelectedUser(null);
         WRTC.app.au.stopSound();
         alert('Вызов отклонен');
     }
+};
+
+/**
+ * установка пользователя для видеочата
+ * @param user
+ */
+WRTC.setSelectedUser = function(user){
+    WRTC.selected_user = user;
+    if (window.localStorage)
+        if (user !== null){
+            window.localStorage.setItem('videochat_user', user);
+        }else{
+            window.localStorage.removeItem('videochat_user');
+        }
 };
 
 

@@ -260,14 +260,14 @@ I.reloadPage = function(url){
 };
 
 /**
- * заполнение списка пользовалелей online
+ * заполнение списка пользователей online
  * @param user_list
  */
 I.refreshUsersOnline = function(user_list){
     if (I.list_users_online == null) return;
     I.destroyChildren(I.list_users_online);
     if (user_list.indexOf(I.app.selected_user) == -1){
-        I.app.selected_user = null;
+        I.app.setSelectedUser(null);
     }
     for (var i = 0; i< user_list.length; i++){
         if (user_list[i] == I.app.nicname) continue;
@@ -281,14 +281,14 @@ I.refreshUsersOnline = function(user_list){
 
         if (I.app.selected_user == null){
             li.className = 'user-item selected';
-            I.app.selected_user = user_list[i];
+            I.app.setSelectedUser(user_list[i]);
         }
         li.innerHTML = user_list[i];
         I.list_users_online.appendChild(li);
     }
     var list = document.getElementsByClassName('user-item');
     for (var i = 0; i < list.length; i++){
-        list[i].addEventListener('click', I.selectUser);
+        list[i].addEventListener('click', I.clickOnUser);
     }
     if (I.user_for_chat != null) I.user_for_chat.innerHTML = I.app.selected_user;
     if (I.user_for_videochat != null) I.user_for_videochat.innerHTML = I.app.selected_user;
@@ -313,22 +313,29 @@ I.destroyChildren = function(node){
 
 /**
  * Обработка выбора пользователя для общения
- * @param e
+ * @param user
  */
-I.selectUser = function(e){
-    console.log(this.id.split('-').pop());
+I.selectUser = function(user){
+    console.log(user);
     var list = document.getElementsByClassName('user-item');
     for (var i = 0; i < list.length; i++){
         list[i].className = 'user-item';
+        if (list[i].id.split('-').pop() == user) list[i].className = 'user-item selected';
     }
-    this.className = 'user-item selected';
-    I.app.setSelectedUser(this.id.split('-').pop());
-    if (window.localStorage){
-        window.localStorage.setItem('selected_user', this.id.split('-').pop());
-    }
+    I.app.setSelectedUser(user);
     if (I.user_for_chat != null) I.user_for_chat.innerHTML = I.app.selected_user;
     if (I.user_for_videochat != null) I.user_for_videochat.innerHTML = I.app.selected_user;
     I.requestHistory();
+};
+
+/**
+ * обработчик клика на пользователе
+ * @param e
+ */
+I.clickOnUser = function(e){
+    console.log(this.id.split('-').pop());
+    var user = this.id.split('-').pop();
+    I.selectUser(user);
 };
 
 /**

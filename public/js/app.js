@@ -84,6 +84,9 @@ A.newUser = function(data){
  */
 A.userLost = function(data){
     var mess = 'User ' + data.user + ' was disconnected!';
+    if (A.wrtc.selected_user === data.user){
+        A.wrtc.hangup();
+    }
     A.serverMessage(mess);
 };
 
@@ -102,6 +105,9 @@ A.refreshUsersOnline = function(data){
  */
 A.setSelectedUser = function(user){
     A.selected_user = user;
+    if (window.localStorage){
+        window.localStorage.setItem('selected_user', user);
+    }
 };
 
 
@@ -172,6 +178,10 @@ A.incomingFiles = function(data){
     A.iface.refreshFilesLinks(data);
 };
 
+/**
+ * обработка получения сообщения для сигналлинга в WebRTC
+ * @param data
+ */
 A.gotWRTCMessage = function(data){
     A.wrtc.gotMessage(data);
 };
