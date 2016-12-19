@@ -7,7 +7,6 @@ I.NOTE_TIME = 30000; /*время показа заметки*/
 I.timeout = null;
 I.HISTORY_LEFTTIME = 48; /*длина истории сообщений в часах*/
 I.CHAT_ENABLE = false; /*доступна ли отправка сообщений*/
-I.CAPTURE_LOCAL_VIDEO = true; /*захватывать ли видео с камеры*/
 
 /**
  * Список элементов интерфейса
@@ -32,9 +31,11 @@ I.elements = {
     send_files_btn: 'send-files-btn',
     files_preload: 'files-preload',
     incoming_files: 'incoming-files',
-    local_video: 'local-video',
+    local_video: 'localVideo',
     video_wrap: 'video-wrap',
-    toggle_local_video: 'toggle-local-video'
+    remote_video: 'remoteVideo',
+    call_button: 'callButton',
+    hangup_button: 'hangupButton'
 };
 
 /**
@@ -51,7 +52,6 @@ I.init = function(app){
     }
     I.showMessages();
     if (window.localStorage) I.app.selected_user = window.localStorage.getItem('selected_user');
-    I.toggleLocalVideo();
 };
 
 /**
@@ -146,9 +146,19 @@ I.initElements = function(){
  * установка обработчиков событий элементов интерфейса
  */
 I.setInterfaceHandlers = function(){
-    for (var el in I.handlers){
+    var handlers = {
+        note_close: {event:'click', handler: I.hideNote },
+        send_btn: {event:'click', handler: I.btnSendHandler},
+        exit_btn: {event:'click', handler: I.exit},
+        test: {event:'click', handler: I.test},
+        files_input: {event:'change', handler: F.handlerFileSelect},
+        send_files_btn: {event:'click', handler: I.sendFiles},
+        call_button: {event: 'click', handler: I.app.wrtc.call},
+        hangup_button: {event: 'click', handler: I.app.wrtc.hangup}
+    };
+    for (var el in handlers){
         if (I[el] != null && I[el] != undefined){
-            I[el].addEventListener(I.handlers[el]['event'], I.handlers[el]['handler'], false);
+            I[el].addEventListener(handlers[el]['event'], handlers[el]['handler'], false);
         }
     }
     window.onkeypress = I.keyPressHandler;
@@ -389,47 +399,6 @@ I.chat_enable = function(status){
     }
 };
 
-I.toggleLocalVideo = function(){
-    if (window.localStorage){
-        var on;
-        if ((on = localStorage.getItem('local_video')) != null){
-            I.CAPTURE_LOCAL_VIDEO = JSON.parse(on);
-        }
-    }
-    I.CAPTURE_LOCAL_VIDEO = !I.CAPTURE_LOCAL_VIDEO;
-    if (window.localStorage){
-        localStorage.setItem('local_video', JSON.stringify(I.CAPTURE_LOCAL_VIDEO));
-    }
-    I.toggle_local_video.checked = I.CAPTURE_LOCAL_VIDEO;
-    if (I.CAPTURE_LOCAL_VIDEO){
-        WRTC.showLocalVideo(I.local_video, function(msg){
-            I.showNote(msg);
-            var prev = document.getElementById('wrtc-mess');
-            if (prev != null ) I.video_wrap.removeChild(prev);
-            var p = document.createEvent('p');
-            p.textContent = msg;p.id = 'wrtc-mess';
-            p.innerText = msg;
-            p.id = 'wrtc-mess';
-            p.className = 'error';
-            I.video_wrap.appendChild(p);
-        });
-    }else{
-        WRTC.hideLocalVideo();
-    }
-};
-
-/**
- * Список обработчиков
- */
-I.handlers = {
-    note_close: {event:'click', handler: I.hideNote },
-    send_btn: {event:'click', handler: I.btnSendHandler},
-    exit_btn: {event:'click', handler: I.exit},
-    test: {event:'click', handler: I.test},
-    files_input: {event:'change', handler: F.handlerFileSelect},
-    send_files_btn: {event:'click', handler: I.sendFiles},
-    toggle_local_video: {event: 'change', handler: I.toggleLocalVideo}
-};
 
 
 

@@ -11,10 +11,13 @@ A.init = function(){
     A.socket.init(A);
     A.files = F;
     A.files.init(A);
+    A.setEventHandlers();
+    A.wrtc = WRTC;
+    A.wrtc.init(A);
+    A.au = AU;
+    A.au.init(A);
     A.iface = I;
     A.iface.init(A);
-    A.setEventHandlers();
-
 };
 
 /**
@@ -31,6 +34,7 @@ A.setEventHandlers= function(){
     A.socket.setEventHandler('have_file', A.haveFile);
     A.socket.setEventHandler('file_accepted', A.fileAccepted);
     A.socket.setEventHandler('you_files', A.incomingFiles);
+    A.socket.setEventHandler('wrtc_message', A.gotWRTCMessage);
 };
 
 /**
@@ -166,5 +170,9 @@ A.requestFiles = function(){
  */
 A.incomingFiles = function(data){
     A.iface.refreshFilesLinks(data);
+};
+
+A.gotWRTCMessage = function(data){
+    A.wrtc.gotMessage(data);
 };
 

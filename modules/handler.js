@@ -64,6 +64,15 @@ function request_files(socket, chat){
     });
 }
 
+function wrtc_message(socket, chat){
+    socket.on('wrtc_message', function(data){
+        var nicname = chat.getNicname(socket.id);
+        var adresat_id = chat.getSocketId(data.to);
+        var message = data.message;
+        socket.broadcast.to(adresat_id).emit('wrtc_message', {message:message, from: nicname});
+    });
+}
+
 
 
 exports.user_connect = user_connect;
@@ -72,3 +81,4 @@ exports.user_message = user_message;
 exports.message_history = message_history;
 exports.send_file = send_file;
 exports.request_files = request_files;
+exports.wrtc_message = wrtc_message;

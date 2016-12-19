@@ -54,5 +54,6 @@ io.on('connection', function(socket){
     Handler.message_history(socket, chat);
     Handler.send_file(socket, chat);
     Handler.request_files(socket, chat);
+    Handler.wrtc_message(socket, chat);
 });
 
