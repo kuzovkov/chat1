@@ -1,10 +1,11 @@
 {% extends 'layout.html' %}
 
 {% block js %}
-    <link rel="stylesheet" href="/vendor/jquery/jquery-ui.css">
-    <link rel="stylesheet" href="/vendor/jquery/style.css">
+    <link rel="stylesheet" href="/vendor/jquery-ui/jquery-ui.min.css">
+    <link rel="stylesheet" href="/vendor/jquery-ui/jquery-ui.theme.min.css">
+    <link rel="stylesheet" href="/vendor/jquery-ui/jquery-ui.structure.min.css">
     <script src="/vendor/jquery/jquery-1.12.4.js"></script>
-    <script src="/vendor/jquery/jquery-ui.js"></script>
+    <script src="/vendor/jquery-ui/jquery-ui.min.js"></script>
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="/js/socket.js"></script>
@@ -16,16 +17,65 @@
     <script type="text/javascript" src="/js/app.js"></script>
     <script type="text/javascript" src="/js/index.js"></script>
     <script type="text/javascript" src="/js/cookie.js"></script>
+    <script type="text/javascript" src="/js/ui.js"></script>
 {% endblock %}
 
 {% block content %}
 <div class="content-wrapper">
-    {% include 'panel.html' %}
-    {% include 'userlist.html' %}
-    {% include 'videochat.html' %}
-    {% include 'chat.html' %}
+    <div class="left ui-widget-content">
+        <div class="top">
+            {% include 'panel.html' %}
+            {% include 'note.html' %}
+        </div>
+        <div class="bottom">
+            <div id="accordion">
+                <div class="group users-list">
+                    <h3>Users</h3>
+                    <div>
+                        {% include 'userlist.html' %}
+                    </div>
+                </div>
+
+                <div class="group">
+                    <h3>Send files</h3>
+                    <div>
+                        {% include 'files.html' %}
+                    </div>
+                </div>
+
+                <div class="group">
+                    <h3>Incoming files</h3>
+                    <div>
+                        <div class="incoming-files">
+                            <ul id="incoming-files"></ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="cls"></div>
+        </div>
+
+    </div>
+
+    <div class="right">
+        <div id="tabs">
+            <ul>
+                <li><a href="#tabs-1">Videochat</a></li>
+                <li><a href="#tabs-2">Chat</a></li>
+            </ul>
+            <div id="tabs-1">
+                {% include 'videochat.html' %}
+                <div class="cls"></div>
+            </div>
+            <div id="tabs-2">
+                {% include 'chat.html' %}
+                <div class="cls"></div>
+            </div>
+        </div>
+
+    </div>
     <div class="cls"></div>
-    {% include 'note.html' %}
-    {% include 'files.html' %}
+
 </div>
 {% endblock %}

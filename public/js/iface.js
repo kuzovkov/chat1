@@ -273,20 +273,20 @@ I.refreshUsersOnline = function(user_list){
         if (user_list[i] == I.app.nicname) continue;
         var li = document.createElement('li');
         li.id = 'chat-' + user_list[i];
-        li.className = 'user-item';
+        li.className = 'ui-widget-content';
         console.log(I.app.selected_user +':'+user_list[i]);
         if (I.app.selected_user == user_list[i]){
-            li.className = 'user-item selected';
+            li.className = 'ui-widget-content ui-selected';
         }
 
         if (I.app.selected_user == null){
-            li.className = 'user-item selected';
+            li.className = 'ui-widget-content ui-selected';
             I.app.setSelectedUser(user_list[i]);
         }
         li.innerHTML = user_list[i];
         I.list_users_online.appendChild(li);
     }
-    var list = document.getElementsByClassName('user-item');
+    var list = document.getElementsByClassName('ui-widget-content');
     for (var i = 0; i < list.length; i++){
         list[i].addEventListener('click', I.clickOnUser);
     }
@@ -319,8 +319,8 @@ I.selectUser = function(user){
     console.log(user);
     var list = document.getElementsByClassName('user-item');
     for (var i = 0; i < list.length; i++){
-        list[i].className = 'user-item';
-        if (list[i].id.split('-').pop() == user) list[i].className = 'user-item selected';
+        list[i].className = 'ui-widget-content';
+        if (list[i].id.split('-').pop() == user) list[i].className = 'ui-widget-content ui-selected';
     }
     I.app.setSelectedUser(user);
     if (I.user_for_chat != null) I.user_for_chat.innerHTML = I.app.selected_user;
@@ -332,9 +332,9 @@ I.selectUser = function(user){
  * обработчик клика на пользователе
  * @param e
  */
-I.clickOnUser = function(e){
-    console.log(this.id.split('-').pop());
-    var user = this.id.split('-').pop();
+I.clickOnUser = function(e, ui){
+    if (ui === undefined) return;
+    var user = ui.selected.id.split('-').pop();
     I.selectUser(user);
 };
 
