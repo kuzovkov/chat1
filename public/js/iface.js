@@ -7,6 +7,7 @@ I.NOTE_TIME = 30000; /*время показа заметки*/
 I.timeout = null;
 I.HISTORY_LEFTTIME = 48; /*длина истории сообщений в часах*/
 I.CHAT_ENABLE = false; /*доступна ли отправка сообщений*/
+I.call_sound = 'call.wav';
 
 /**
  * Список элементов интерфейса

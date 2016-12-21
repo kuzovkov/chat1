@@ -2,8 +2,10 @@
 // AudioAPI
 
 var AU = {};
+AU.app = null;
 
-AU.init = function(){
+AU.init = function(app){
+    AU.app = app;
     AU.audioCtx;
     AU.audioSource = null;
     try {
@@ -17,7 +19,7 @@ AU.init = function(){
 
     AU.buffers = {}; /*объект для хранения буферов для звука вызова*/
     /*загружаем звук с сервера*/
-    AU.loadSound('/sounds/call.wav');
+    AU.loadSound('/sounds/' + AU.app.iface.call_sound);
 };
 
 

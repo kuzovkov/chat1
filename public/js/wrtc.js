@@ -31,7 +31,7 @@ WRTC.call = function(){
     WRTC.setSelectedUser(WRTC.app.selected_user);
     WRTC.hang_up = false;
     WRTC.sendMessage({type:'intent_call'});
-    WRTC.app.au.playSound('call.wav');
+    WRTC.app.au.playSound(WRTC.app.iface.call_sound);
     document.getElementById("hangupButton").style.display = 'inline-block';
 };
 
@@ -264,7 +264,7 @@ WRTC.gotMessage = function(data){
     }else if(message.type === 'offer_ready'){
         WRTC.createOffer();
     }else if (message.type === 'intent_call'){
-        WRTC.app.au.playSound('call.wav');
+        WRTC.app.au.playSound(WRTC.app.iface.call_sound);
         if (WRTC.confirmAnswer(from)){
             WRTC.hangup();
             WRTC.setSelectedUser(from);

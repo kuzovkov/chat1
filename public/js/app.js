@@ -14,10 +14,11 @@ A.init = function(){
     A.setEventHandlers();
     A.wrtc = WRTC;
     A.wrtc.init(A);
-    A.au = AU;
-    A.au.init(A);
     A.iface = I;
     A.iface.init(A);
+    A.au = AU;
+    A.au.init(A);
+
 };
 
 /**

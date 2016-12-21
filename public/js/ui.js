@@ -2,7 +2,8 @@ $(function() {
 
     $("#accordion")
         .accordion({
-            header: "> div > h3"
+            header: "> div > h3",
+            heightStyle: "fill"
         })
         .sortable({
             axis: "y",
@@ -16,10 +17,8 @@ $(function() {
             }
         });
 
-        //$("#users-online.selectable").selectable({selected: I.clickOnUser});
-
         $( "#tabs" ).tabs();
 
-         $( "#localVideo" ).draggable();
-
+         $( "#video-wrap .localVideo" ).draggable().resizable();
+            $( "#video-wrap .remoteVideo" ).draggable().resizable();
 });
