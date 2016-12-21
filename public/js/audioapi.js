@@ -8,7 +8,7 @@ AU.init = function(){
     AU.audioSource = null;
     try {
         // Fix up for prefixing
-        window.AudioContext = window.AudioContext||window.webkitAudioContext;
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
         AU.audioCtx = new AudioContext();
     }
     catch(e) {
@@ -17,7 +17,7 @@ AU.init = function(){
 
     AU.buffers = {}; /*объект для хранения буферов для звука вызова*/
     /*загружаем звук с сервера*/
-    AU.loadSound('/sounds/call.mp3');
+    AU.loadSound('/sounds/call.wav');
 };
 
 

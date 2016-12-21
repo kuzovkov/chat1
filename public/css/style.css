@@ -17,9 +17,9 @@ p, input, div, button {padding: 0; margin: 0;}
 
 /*video*/
 #remoteVideo { width: 100%; height: auto; margin: 5px; background: #000;border: 1px solid grey;}
-#localVideo { width: 40%; position: absolute; right: 1.1em; bottom: 1em; border: 1px solid grey; background: #000; }
-#callButton { position: absolute; display: inline-block; left: 45%; font-size: 2em; bottom: -50px; border-radius: 1em; }
-#hangupButton { position: absolute; display: none; left: 55%; font-size: 2em; bottom: -50px; border-radius: 1em; }
+#localVideo { width: 40%; position: absolute; right: 1.1em; bottom: 1em; border: 1px solid grey; background: #000; z-index: 999;}
+#callButton { position: absolute; display: inline-block; left: 45%; font-size: 2em; bottom: -50px; border-radius: 1em; z-index: 9999;}
+#hangupButton { position: absolute; display: none; left: 55%; font-size: 2em; bottom: -50px; border-radius: 1em; z-index: 9999;}
 .video-wrap {  width: 90%;  height: 100%;  margin: 10px;  position:relative;  padding: 0 10px 0 10px; text-align: center;}
 
 /*panel*/
@@ -29,17 +29,26 @@ p, input, div, button {padding: 0; margin: 0;}
 
 /*chat*/
 .chat input { width: 100%; margin: 5px 10px 5px 0;  }
-.messages { width: 100%;  height: 100%;  margin-right: 20px; border: 2px solid grey;  overflow: auto; background-color: #f8eec9;}
-.author { color: blue;  }
-.text{ color: grey;  }
-.chat {  width: 100%; height: 100%; margin-right: 10px;  padding: 0 10px 0 10px;}
+.messages { width: 100%;  height: 100%;  margin-right: 20px; border: 2px solid #f8eec9;  overflow: auto; background-color: #362917;}
+.author-out { color: #f9f2bd;  }
+.created{color: #555;}
+.text{ color: #ddd;  }
+.messages li{font-size: 0.8em;}
+.messages li:nth-child(odd){background-color: #333333; }
+.chat {  width: 100%; height: 100%; margin: 10px auto 0 auto;  padding: 0;}
 .chat p { padding-top: 0;padding-bottom: 0;  }
 .input { position: relative;  padding-right: 0; /*border: 1px solid red;*/  }
-.input input {  width: 100%;  height: 30px;  border: 1px solid grey;  border-radius: 5px;  padding: 0; background-color: #f8eec9; }
-.input button {  position: absolute;  right: 0;  top: 0;  height: 30px;  width: 80px;  margin-top: 6px;  margin-right: -1px;  border-radius: 5px;}
+.input input {  width: 100%;  height: 30px;  border: 1px solid grey;  border-radius: 5px;  padding: 0; background-color: #362917; color: #f8eec9; font-size:0.7em;}
+.input button {  position: absolute;  right: 0;  top: 0;  height: 30px;  width: 80px;  margin-top: 6px;  margin-right: -1px; border-radius: 5px; background: url('/img/share.svg') no-repeat 30px; background-size: 24px 24px;}
+.input button:hover { background: url('/img/share.svg') no-repeat 30px; background-size: 24px 24px; opacity: 0.5; border: 1px solid #f8eec9;}
 ul.messages-list { list-style-type: none;  }
 
 /*userlist*/
+#users-online{list-style-type: none;}
+#users-online li{cursor: pointer; padding-left: 40px;}
+#users-online li:hover{opacity: 0.5;}
+#users-online li.selected{background: url('/img/point-right.svg') no-repeat; background-size: 24px 24px;}
+
 .feedback { font-size: 1.4em; }
 .selectable .ui-selecting { background: #FECA40; }
 .selectable .ui-selected { background: #F39814; color: white; }
@@ -54,7 +63,7 @@ ul.messages-list { list-style-type: none;  }
 
 /*note*/
 .note {  width: 400px; height: 50px;border: 2px solid grey; font-size: 0.8em;  border-radius: 10px;  background-color: #ffd700;  opacity: 0.5;  position: absolute;  bottom: 20px;  right: 10px;  display: none;  z-index:9999;}
-#note-close {  cursor: pointer;  position: absolute;  top: 5px;  right: 5px;  font-size: 1.1em;  }
+#note-close {  cursor: pointer;  position: absolute;  top: 5px;  right: 5px;  font-size: 1.1em; color: #333; }
 #note-text { width:350px; height: 45px; position: absolute; top: 50%; left: 50%; margin-top: -23px; margin-left: -175px; color: #333 }
 
 /*files*/
@@ -69,4 +78,6 @@ ul.messages-list { list-style-type: none;  }
 .right div#tabs { min-height:100%; height: 100%;padding: 0; margin: 0;}
 .top{width: 100%; height: 10%;}
 .bottom{width: 100%; min-height: 88%;}
-#tabs-2 {height: 80%; position: relative;}
+#tabs {position: relative;}
+#tabs-2 {top: 40px; position: absolute; bottom: 100px; left: 10px; width: 90%;}
+#tabs-1 {top: 40px; position: absolute; bottom: 100px; left: 10px; width: 90%;}

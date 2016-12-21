@@ -16,9 +16,10 @@ $(function() {
             }
         });
 
-        $("#users-online.selectable").selectable({selected: I.clickOnUser});
+        //$("#users-online.selectable").selectable({selected: I.clickOnUser});
+
         $( "#tabs" ).tabs();
 
-
+         $( "#localVideo" ).draggable();
 
 });
