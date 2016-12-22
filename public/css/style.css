@@ -15,6 +15,44 @@ p, input, div, button {padding: 0; margin: 0;}
 .brown-border{border: 1px solid brown;}
 .purple-border{border: 1px solid purple;}
 .white-border{border: 2px solid white;}
+img {margin: 0; padding: 0;}
+button {text-align: center;}
+.icon{width: 32px; height: 32px;}
+
+
+
+@media screen and (min-width: 400px){
+    body {font-size: 0.7em;}
+    .icon{width: 20px; height: 20px;}
+}
+
+@media screen and (min-width: 600px){
+    body {font-size: 0.7em;}
+    .icon{width: 20px; height: 20px;}
+}
+
+@media screen and (min-width: 800px){
+    body {font-size: 0.8em;}
+    .icon{width: 24px; height: 24px;}
+}
+
+@media screen and (min-width: 1000px){
+    body {font-size: 0.9em;}
+    .icon{width: 28px; height: 28px;}
+
+}
+
+@media screen and (min-width: 1200px){
+    body {font-size: 1.0em;}
+    .icon{width: 32px; height: 32px;}
+
+}
+
+@media screen and (max-width: 600px){
+    .right{clear:both; width: 100%; min-width:100%;}
+    .left {width: 100%; min-width: 100%;}
+    .icon{width: 20px; height: 20px;}
+}
 
 /*video*/
 #remoteVideo { width: 100%; height: calc(100% - 1.0em - 3px); margin: 0; background: #000;}
@@ -23,9 +61,9 @@ p, input, div, button {padding: 0; margin: 0;}
 .localVideo h3 {height: 1.0em; margin: 0; padding: 0;}
 .remoteVideo {width: 100%; height:auto; position: absolute; top: 10px; right: 1.1em; bottom: 1em; border: 1px solid grey; z-index: 99; padding: 0; background-color: #222;}
 .remoteVideo h3 {height: 1.0em; margin: 0; padding: 0;}
-
-#callButton { position: absolute; display: inline-block; left: 45%; font-size: 2em; bottom: -50px; border-radius: 1em; z-index: 9999;}
-#hangupButton { position: absolute; display: none; left: 55%; font-size: 2em; bottom: -50px; border-radius: 1em; z-index: 9999;}
+.call-buttons{position: absolute; display: inline-block; left: 50%; width: 100%; margin-left: -50%; bottom: 50px;z-index: 9999;}
+#callButton { display: inline-block; font-size: 1em; border-radius: 1em; }
+#hangupButton { display: none; font-size: 1em; border-radius: 1em; }
 .video-wrap {  width: 90%;  height: 100%;  margin: 10px;  position:relative;  padding: 0 10px 0 10px; text-align: center;}
 
 /*panel*/
@@ -53,7 +91,7 @@ ul.messages-list { list-style-type: none;  }
 #users-online{list-style-type: none;}
 #users-online li{cursor: pointer; padding-left: 40px;}
 #users-online li:hover{opacity: 0.5;}
-#users-online li.selected{background: url('/img/point-right.svg') no-repeat; background-size: 24px 24px;}
+#users-online li.selected{background: url('/img/point-right.svg') no-repeat; background-size: 20px 20px;}
 
 .feedback { font-size: 1.4em; }
 .selectable .ui-selecting { background: #FECA40; }
@@ -73,11 +111,16 @@ ul.messages-list { list-style-type: none;  }
 #note-text { width:350px; height: 45px; position: absolute; top: 50%; left: 50%; margin-top: -23px; margin-left: -175px; color: #333 }
 
 /*files*/
-.files {  border: 1px solid grey;  border-radius: 5px;  position: relative;}
+.files { border-radius: 2px;  position: relative; overflow:visible;}
 #files-preload {  width: 40px;  height: 40px;  position: absolute;  top: 50%;  left: 50%;  margin-top: -20px;  margin-left: -20px;  display: none;  }
-.incoming-files {  border: 1px solid grey;  border-radius: 5px;  position: relative;  margin-top: 5px;  height: 100px;  }
-#incoming-files {  width: 95%;  background-color: #fff;  padding: 5px;  height: 80px;  border: 1px solid #ccc;  position: absolute;  top: 5px;  left: 40px;  overflow: scroll;  }
-.files input {background-color: #f8eec9;}
+.files input {float: left; width: 50%; height: 40px;}
+.files button {float: right; width: 19%;}
+#files-list{position: absolute; top:50px; width: 100%; overflow: auto; }
+#files-list ul {list-style-type: none;}
+
+.incoming-files {  position: relative;  margin-top: 5px;  height: 100%; }
+#incoming-files {  width: 95%;  padding: 5px;  height: 100%;  position: absolute;  top: 5px;  left: 40px;  overflow: auto;  }
+
 /*blocks*/
 .left{width: 30%; min-height: 100%; float: left;  padding: 0; margin: 0; position: relative;}
 .right{width: 69%; height: 100%; float: right; padding: 0; margin: 0;}

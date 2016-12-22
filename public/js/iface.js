@@ -36,7 +36,8 @@ I.elements = {
     video_wrap: 'video-wrap',
     remote_video: 'remoteVideo',
     call_button: 'callButton',
-    hangup_button: 'hangupButton'
+    hangup_button: 'hangupButton',
+    cancel_button: 'cancel-btn'
 };
 
 /**
@@ -83,7 +84,7 @@ I.sendFiles = function(){
 
 /**
  * заполнение списка выбранных для отправки файлов
- * @param list массив параметров фалов
+ * @param list массив параметров файлов
  * @param el елемент DOM куда выводить
  */
 I.fillFilesList = function(list) {
@@ -91,11 +92,11 @@ I.fillFilesList = function(list) {
         if (I.files_list != null) I.files_list.innerHTML = '';
         return;
     }
-    var html = ['<table><tr><th>Name</th><th>Type</th><th>Size</th><th>Sended</th></tr>'];
+    var html = ['<ul class="files-list">'];
     for (var i =0; i < list.length; i++){
-        html.push('<tr>','<td>', list[i][0], '</td>', '<td>', list[i][1], '</td>', '<td>', list[i][2], '</td>', '<td>', list[i][3], '</td>', '</tr>');
+        html.push('<li>', list[i][0], '</li>');
     }
-    html.push('</table>')
+    html.push('</ul>');
     if (I.files_list != null) I.files_list.innerHTML = html.join('');
 }
 
@@ -131,6 +132,14 @@ I.fileAccepted = function(to, fname){
     console.log(I.files_list);
 };
 
+/**
+ * очистка выбранных файлов
+ */
+I.clearSelectedFiles = function(){
+    I.files_input.value = null;
+    F.choosen_files = [];
+    I.files_list.innerHTML = '';
+};
 
 /**
  * инициализация элементов интерфейса
@@ -155,7 +164,8 @@ I.setInterfaceHandlers = function(){
         files_input: {event:'change', handler: F.handlerFileSelect},
         send_files_btn: {event:'click', handler: I.sendFiles},
         call_button: {event: 'click', handler: I.app.wrtc.call},
-        hangup_button: {event: 'click', handler: I.app.wrtc.hangup}
+        hangup_button: {event: 'click', handler: I.app.wrtc.hangup},
+        cancel_button: {event: 'click', handler: I.clearSelectedFiles},
     };
     for (var el in handlers){
         if (I[el] != null && I[el] != undefined){
