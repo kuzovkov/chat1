@@ -81,11 +81,10 @@ function remove_file(req, res){
             });
         }
     }
-    res.redirect('/');
+    res.send(true);
     res.end();
 
 }
-
 
 
 function test(req, res){

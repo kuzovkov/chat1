@@ -66,5 +66,14 @@ F.fileAccepted = function(fname){
         }
     }
     F.app.iface.fillFilesList(output);
-}
+};
+
+/**
+ * удаление присланного файла
+ * @param e
+ */
+F.deleteFile = function(e){
+    var url = this.id;
+    Ajax.sendRequest('GET', url, null, A.requestFiles);
+};
 

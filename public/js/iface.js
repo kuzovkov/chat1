@@ -109,10 +109,17 @@ I.refreshFilesLinks = function(data){
     for (var i = 0; i < data.files.length; i++){
         var fname = data.files[i].origname;
         var secret = data.files[i].secret;
-        html.push(['<li><a href="/file/', secret, '" title="Download">', fname, '</a>&nbsp;<a title="Delete" href="/file-del/', secret,'">'].join(''));
-        html.push(['delete</a></li>'].join(''));
+        html.push('<li>');
+        html.push(['<img id="/file-del/', secret, '" title="Delete" class="icon-small delete-file" src="/img/cancel-circle.svg"/>'].join(''));
+        html.push('&nbsp;');
+        html.push(['<a href="/file/', secret, '" title="Download">', fname, '</a>'].join(''));
+        html.push('</li>');
     }
     I.incoming_files.innerHTML = html.join('');
+    var icons = document.getElementsByClassName('delete-file');
+    for (var i = 0; i < icons.length; i++){
+        icons[i].addEventListener('click', F.deleteFile, false);
+    }
 };
 
 
