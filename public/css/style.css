@@ -123,6 +123,9 @@ img#chat-preload {width: 64px;  height: 64px;  position: absolute;  top: 50%;  l
 
 .incoming-files {  position: relative;  margin-top: 5px;  height: 100%; }
 #incoming-files {  width: 95%;  padding: 5px;  height: 100%;  position: absolute;  top: 5px;  left: 40px;  overflow: auto;  }
+.progress{ width: 100%; height: 20px; background-color: #333; padding:0; color: #aaa; text-align: center; margin-top: 200px; display: none;}
+.progress-bar{width:0%; height: 20px; background-color:#f8eec9; margin:0;}
+
 
 /*blocks*/
 .left{width: 30%; min-height: 100%; float: left;  padding: 0; margin: 0; position: relative;}

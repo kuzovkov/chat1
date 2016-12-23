@@ -71,6 +71,7 @@ I.sendFiles = function(){
     if (!I.CHAT_ENABLE) return;
     //console.log(F.choosen_files);
     I.files_list.innerHTML = '';
+    $('.progress').show();
     for (var i = 0,f; f = F.choosen_files[i]; i++){
         I.app.sendFile(f, I.fileUploadProgress, I.fileUploadComplete);
     }
@@ -424,12 +425,14 @@ I.chat_enable = function(status){
 
 
 I.fileUploadProgress = function(percent){
-
+    $('.progress-bar').width(percent + '%');
+    $('.progress').text(percent + '%');
 };
 
 
 I.fileUploadComplete = function(){
-
+    $('.progress').text('Done');
+    $('.progress').hide(2000);
 };
 
 
