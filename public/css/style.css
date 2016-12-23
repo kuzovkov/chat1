@@ -68,7 +68,7 @@ button {text-align: center;}
 .video-wrap {  width: 90%;  height: 100%;  margin: 10px;  position:relative;  padding: 0 10px 0 10px; text-align: center;}
 
 /*panel*/
-.panel {  width: auto;  height: 30px;  padding: 10px;   border: 1px solid grey;  margin:10px; font-family: Georgia, Verdana, Arial, sans-serif; font-size: 1.2em;}
+.panel {  width: auto;  height: 30px;  padding: 10px;  margin:10px; font-family: Georgia, Verdana, Arial, sans-serif; font-size: 1.2em;}
 .panel span{ text-decoration: underline;}
 .exit-icon{background: url('/img/exit.svg'); display: inline-block;  background-size: 24px 24px; width: 24px;  height: 24px; float: right;}
 
@@ -87,6 +87,7 @@ button {text-align: center;}
 .input button { height: 30px;  width: 80px;  margin-top: 6px;  margin-right: -1px; border-radius: 5px; background: url('/img/share.svg') no-repeat 30px; background-size: 24px 24px; float: right;border: 1px solid #f8eec9;}
 .input button:hover { background: url('/img/share.svg') no-repeat 30px; background-size: 24px 24px; opacity: 0.5; border: 1px solid #f8eec9; opacity: 0.5;}
 ul.messages-list { list-style-type: none;  }
+img#chat-preload {width: 64px;  height: 64px;  position: absolute;  top: 50%;  left: 50%;  margin-top: -32px;  margin-left: -32px;  display: none;}
 
 /*userlist*/
 #users-online{list-style-type: none;}

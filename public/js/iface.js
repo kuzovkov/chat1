@@ -37,7 +37,8 @@ I.elements = {
     remote_video: 'remoteVideo',
     call_button: 'callButton',
     hangup_button: 'hangupButton',
-    cancel_button: 'cancel-btn'
+    cancel_button: 'cancel-btn',
+    chat_preload: 'chat-preload'
 };
 
 /**
@@ -60,7 +61,7 @@ I.init = function(app){
  * тестовая функция
  */
 I.test = function(){
-    console.log(I.toggle_local_video.checked);
+
 };
 
 /**
@@ -69,15 +70,9 @@ I.test = function(){
 I.sendFiles = function(){
     if (!I.CHAT_ENABLE) return;
     //console.log(F.choosen_files);
-    I.showElem(I.files_preload);
     I.files_list.innerHTML = '';
     for (var i = 0,f; f = F.choosen_files[i]; i++){
-        console.log(f);
-        F.readFile(f, function(f, data){
-            //console.log(f.name);
-            //console.log(data);
-            I.app.sendFile(f.name, data);
-        });
+        I.app.sendFile(f, I.fileUploadProgress, I.fileUploadComplete);
     }
     I.files_input.value = null;
 };
@@ -93,8 +88,9 @@ I.fillFilesList = function(list) {
         return;
     }
     var html = ['<ul class="files-list">'];
-    for (var i =0; i < list.length; i++){
-        html.push('<li>', list[i][0], '</li>');
+    for (var i in list){
+        if (typeof(list[i]) !== 'object') continue;
+        html.push('<li id="fl-', i,'">', list[i].name, '</li>');
     }
     html.push('</ul>');
     if (I.files_list != null) I.files_list.innerHTML = html.join('');
@@ -130,13 +126,15 @@ I.refreshFilesLinks = function(data){
  */
 I.fileAccepted = function(to, fname){
     I.hideElem(I.files_preload);
+    /*
+
     var note = ['File ', fname, ' to user ', to, ' was send'].join('');
     //I.showNote(note);
     var p = document.createElement('p');
     p.innerHTML = note;
     console.log(p);
     I.files_list.appendChild(p);
-    console.log(I.files_list);
+    console.log(I.files_list);*/
 };
 
 /**
@@ -229,7 +227,7 @@ I.refreshMessages = function(messages){
  */
 I.requestHistory = function(){
     if (I.messages_block == null) return;
-    I.messages_block.innerHTML = '<img src="/img/preload.gif" class="preload"/>';
+    I.showElem(I.chat_preload);
     I.app.requestMessagesHistory();
 };
 
@@ -257,6 +255,7 @@ I.showMessages = function(){
         html.push('</span></li>');
     }
     html.push('</ul>');
+    I.hideElem(I.chat_preload);
     I.messages_block.innerHTML = html.join('');
 }
 
@@ -403,7 +402,7 @@ I.hideElem = function(el){
  * @param el элемент DOM
  */
 I.showElem = function(el){
-    console.log(el);
+    //console.log(el);
     if (el != null && el != undefined){
         el.style.display = 'block';
     }
@@ -421,6 +420,16 @@ I.chat_enable = function(status){
     }else{
         I.input.disabled = true;
     }
+};
+
+
+I.fileUploadProgress = function(percent){
+
+};
+
+
+I.fileUploadComplete = function(){
+
 };
 
 

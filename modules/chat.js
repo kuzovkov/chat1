@@ -22,7 +22,7 @@ Chat.addUser = function(nicname){
             return false;
         }
     }
-    Chat.users[nicname] = 0;
+    Chat.users[nicname] = {'socket': null};
     return true;
 }
 
@@ -31,8 +31,9 @@ Chat.addUser = function(nicname){
  * @param nicname
  * @param socketId
  */
-Chat.refreshSocketId = function(nicname, socketId){
-    Chat.users[nicname] = socketId;
+Chat.refreshSocket = function(nicname, socket){
+    Chat.users[nicname] = {'socket': null};
+    Chat.users[nicname].socket = socket;
 }
 
 /**
@@ -42,7 +43,7 @@ Chat.refreshSocketId = function(nicname, socketId){
  */
 Chat.getNicname = function(socketId){
     for (nicname in Chat.users){
-        if (Chat.users[nicname] == socketId){
+        if (Chat.users[nicname].socket.id == socketId){
             return nicname;
         }
     }
@@ -55,7 +56,7 @@ Chat.getNicname = function(socketId){
  */
 Chat.removeUser = function(socketId){
     for (nicname in Chat.users){
-        if (Chat.users[nicname] == socketId){
+        if (Chat.users[nicname].socket.id == socketId){
             delete Chat.users[nicname];
         }
     }
@@ -74,17 +75,32 @@ Chat.getUsersOnline = function(){
 }
 
 /**
- * получение socket id по нику пользователяs
+ * получение socket id по нику пользователя
  * @param nicname
  * @returns {*}
  */
 Chat.getSocketId = function(nicname){
     if (Chat.users[nicname] != undefined){
-        return Chat.users[nicname];
+        return Chat.users[nicname].socket.id;
     }else{
         return null;
     }
-}
+};
+
+/**
+ * получение объекта socket по нику пользователя
+ * @param nicname
+ * @returns {*}
+ */
+Chat.getSocket = function(nicname){
+    if (Chat.users[nicname] != undefined){
+        return Chat.users[nicname].socket;
+    }else{
+        return null;
+    }
+};
+
+
 
 /**
  * добавление сообщения в массив
@@ -132,12 +148,11 @@ Chat.getLastMessages = function(user1, user2, lefttime){
  * @param fdata тело файла
  * @param callback функция обратного вызова в которую передается результат
  */
-Chat.saveFile = function(from, to, fname, fdata, callback){
+Chat.saveFile = function(from, to, fname, buffer, callback){
     var encname = base64.base64_encode(fname);
     var filename = Chat.USERS_FILES_DIR + '/' + encname;
-    var data = new Buffer(fdata, 'base64');
 
-    fs.writeFile(filename, data, function(err){
+    fs.writeFile(filename, buffer, function(err){
         if (!err){
             fs.stat(filename, function(err, info){
                 var timestamp = (new Date()).getTime();
@@ -217,11 +232,12 @@ Chat.delFileMetadataBySecret = function(secret){
 
 
 exports.addUser = Chat.addUser;
-exports.refreshSocketId = Chat.refreshSocketId;
+exports.refreshSocket = Chat.refreshSocket;
 exports.getNicname = Chat.getNicname;
 exports.removeUser = Chat.removeUser;
 exports.getUsersOnline = Chat.getUsersOnline;
 exports.getSocketId = Chat.getSocketId;
+exports.getSocket = Chat.getSocket;
 exports.addMessage = Chat.addMessage;
 exports.getLastMessages = Chat.getLastMessages;
 exports.saveFile = Chat.saveFile;

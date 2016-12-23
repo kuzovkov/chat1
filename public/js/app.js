@@ -141,8 +141,8 @@ A.lastMessages = function(data){
  * @param fname
  * @param fdata
  */
-A.sendFile = function(fname, fdata){
-    A.socket.send('send_file', {fname:fname, fdata: base64_encode(fdata),to:A.selected_user});
+A.sendFile = function(f, progress, complete){
+    F.sendFile(f, '/upload', A.selected_user, A.nicname, progress, complete);
 };
 
 /**

@@ -31,11 +31,7 @@ F.handlerFileSelect = function(ev){
     var files = ev.target.files;
     F.choosen_files = files;
     console.log(F.choosen_files);
-    var output = [];
-    for (var i = 0,f; f = files[i]; i++){
-        output.push([escape(f.name), f.type || 'n/a', f.size, 'no']);
-    }
-    F.app.iface.fillFilesList(output);
+    F.app.iface.fillFilesList(F.choosen_files);
 };
 
 /**
@@ -52,20 +48,19 @@ F.readFile = function(f, callback){
     reader.readAsBinaryString(f);
 };
 
+
 /**
  * обработка сообщения от сервера что файл принят
  * @param fname
  */
 F.fileAccepted = function(fname){
-    var output = [];
-    for (var i =0,f; f = F.choosen_files[i]; i++){
-        if (f.name == fname){
-            output.push([escape(f.name), f.type || 'n/a', f.size, 'yes']);
-        }else{
-            output.push([escape(f.name), f.type || 'n/a', f.size, 'no']);
+    for( var i in F.choosen_files){
+        if (F.choosen_files[i].name == fname)
+        {
+            delete F.choosen_files[i];
         }
     }
-    F.app.iface.fillFilesList(output);
+    F.app.iface.fillFilesList(F.choosen_files);
 };
 
 /**
@@ -76,4 +71,59 @@ F.deleteFile = function(e){
     var url = this.id;
     Ajax.sendRequest('GET', url, null, A.requestFiles);
 };
+
+/**
+ * загрузка файла на сервер
+ * @param f объект File
+ * @param url URL обработчика загрузки
+ * @param to адресат
+ * @param from отправитель
+ * @param progress функция обратного вызова в которую передается процент загрузки
+ * @param complete функция обратного вызова при завершении загрузки
+ */
+F.sendFile = function(f, url, to, from, progress, complete){
+    //console.log(f);
+    var formData = new FormData();
+    formData.append('myfile', f, f.name);
+    formData.append('to', to);
+    formData.append('from', from);
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(data){
+            console.log('upload successful!\n' + data);
+        },
+        xhr: function() {
+            // create an XMLHttpRequest
+            var xhr = new XMLHttpRequest();
+
+            // listen to the 'progress' event
+            xhr.upload.addEventListener('progress', function(evt) {
+
+                if (evt.lengthComputable) {
+                    // calculate the percentage of upload completed
+                    var percentComplete = evt.loaded / evt.total;
+                    percentComplete = parseInt(percentComplete * 100);
+                    progress(percentComplete);
+                    // update the Bootstrap progress bar with the new percentage
+                    //$('.progress-bar').text(percentComplete + '%');
+                    //$('.progress-bar').width(percentComplete + '%');
+
+                    // once the upload reaches 100%, set the progress bar text to done
+                    if (percentComplete === 100) {
+                        //$('.progress-bar').html('Done');
+                        complete();
+                    }
+                }
+
+            }, false);
+
+            return xhr;
+        }
+    });
+}
+
 

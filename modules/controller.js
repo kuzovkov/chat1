@@ -87,6 +87,32 @@ function remove_file(req, res){
 }
 
 
+/**
+ * загрузка файла на сервер
+ * @param req
+ * @param res
+ */
+function upload_file(req,res){
+    var to = req.body.to;
+    var from = req.body.from;
+    //console.log(to, from);
+    if (!req.files) {
+        res.send('No files were uploaded.');
+        res.end();
+    }
+    var fdata = req.files.myfile.data;
+    var buffer = new Buffer(fdata, req.files.myfile.encoding);
+    var fname = req.files.myfile.name;
+    global.chat.saveFile(from, to, fname, buffer, function(fsize){
+        var socketTo = global.chat.getSocket(to);
+        var socketFrom = global.chat.getSocket(from);
+        socketTo.emit('have_file', {from: from, fname: fname, fsize: fsize});
+        socketFrom.emit('file_accepted', {to: to, fname: fname});
+    });
+
+}
+
+
 function test(req, res){
     res.render('test');
 }
@@ -98,4 +124,4 @@ exports.remove_file = remove_file;
 exports.choosenicname = choosenicname;
 exports.newUser = newUser;
 exports.test = test;
-
+exports.upload_file = upload_file;
