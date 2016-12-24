@@ -39,7 +39,7 @@ app.set('views',__dirname+'/views');
 app.use(express.static(__dirname+'/public'));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(fileUpload());
+app.use('/upload', fileUpload());
 
 /*обработка запросов*/
 app.get('/', controller.index );

@@ -69,13 +69,19 @@ I.test = function(){
  */
 I.sendFiles = function(){
     if (!I.CHAT_ENABLE) return;
-    //console.log(F.choosen_files);
-    I.files_list.innerHTML = '';
-    $('.progress').show();
+    I.hideElem(I.send_files_btn);
+    I.hideElem(I.cancel_button);
+    I.hideElem(I.files_input);
     for (var i = 0,f; f = F.choosen_files[i]; i++){
-        I.app.sendFile(f, I.fileUploadProgress, I.fileUploadComplete);
+        var progress = document.createElement('div');
+        progress.className = 'progress';
+        var progressbar = document.createElement('div');
+        progressbar.className = 'progress-bar';
+        progress.appendChild(progressbar);
+        var li = document.getElementById('fl-' + i);
+        li.appendChild(progress);
+        I.app.sendFile(f, progressbar);
     }
-    I.files_input.value = null;
 };
 
 /**
@@ -84,6 +90,9 @@ I.sendFiles = function(){
  * @param el елемент DOM куда выводить
  */
 I.fillFilesList = function(list) {
+    I.showElem(I.send_files_btn);
+    I.showElem(I.cancel_button);
+    I.showElem(I.files_input);
     if (list.length == 0){
         if (I.files_list != null) I.files_list.innerHTML = '';
         return;
@@ -117,25 +126,6 @@ I.refreshFilesLinks = function(data){
     for (var i = 0; i < icons.length; i++){
         icons[i].addEventListener('click', F.deleteFile, false);
     }
-};
-
-
-/**
- * обработка сообщения от сервера что отправленный файл принят
- * @param to
- * @param fname
- */
-I.fileAccepted = function(to, fname){
-    I.hideElem(I.files_preload);
-    /*
-
-    var note = ['File ', fname, ' to user ', to, ' was send'].join('');
-    //I.showNote(note);
-    var p = document.createElement('p');
-    p.innerHTML = note;
-    console.log(p);
-    I.files_list.appendChild(p);
-    console.log(I.files_list);*/
 };
 
 /**
@@ -421,18 +411,6 @@ I.chat_enable = function(status){
     }else{
         I.input.disabled = true;
     }
-};
-
-
-I.fileUploadProgress = function(percent){
-    $('.progress-bar').width(percent + '%');
-    $('.progress').text(percent + '%');
-};
-
-
-I.fileUploadComplete = function(){
-    $('.progress').text('Done');
-    $('.progress').hide(2000);
 };
 
 

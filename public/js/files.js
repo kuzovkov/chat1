@@ -27,10 +27,8 @@ F.init = function(app){
  * @param ev
  */
 F.handlerFileSelect = function(ev){
-
     var files = ev.target.files;
-    F.choosen_files = files;
-    console.log(F.choosen_files);
+    F.choosen_files = Array.from(files);
     F.app.iface.fillFilesList(F.choosen_files);
 };
 
@@ -57,10 +55,14 @@ F.fileAccepted = function(fname){
     for( var i in F.choosen_files){
         if (F.choosen_files[i].name == fname)
         {
-            delete F.choosen_files[i];
+            F.choosen_files.splice(i,1);
         }
     }
-    F.app.iface.fillFilesList(F.choosen_files);
+    if (F.choosen_files.length == 0){
+        F.app.iface.fillFilesList(F.choosen_files);
+        F.app.iface.files_input.value = null;
+    }
+
 };
 
 /**
@@ -78,10 +80,9 @@ F.deleteFile = function(e){
  * @param url URL обработчика загрузки
  * @param to адресат
  * @param from отправитель
- * @param progress функция обратного вызова в которую передается процент загрузки
- * @param complete функция обратного вызова при завершении загрузки
+ * @param progressbar элемент в котором будет отображаться прогресс загрузки
  */
-F.sendFile = function(f, url, to, from, progress, complete){
+F.sendFile = function(f, url, to, from, progressbar){
     //console.log(f);
     var formData = new FormData();
     formData.append('myfile', f, f.name);
@@ -107,15 +108,15 @@ F.sendFile = function(f, url, to, from, progress, complete){
                     // calculate the percentage of upload completed
                     var percentComplete = evt.loaded / evt.total;
                     percentComplete = parseInt(percentComplete * 100);
-                    progress(percentComplete);
-                    // update the Bootstrap progress bar with the new percentage
-                    //$('.progress-bar').text(percentComplete + '%');
-                    //$('.progress-bar').width(percentComplete + '%');
+                    // update the progressbar with the new percentage
+                    progressbar.innerText = percentComplete + '%';
+                    progressbar.textContent = percentComplete + '%';
+                    progressbar.style.width = percentComplete + '%';
 
                     // once the upload reaches 100%, set the progress bar text to done
                     if (percentComplete === 100) {
-                        //$('.progress-bar').html('Done');
-                        complete();
+                        progressbar.innerText = 'Done';
+                        progressbar.textContent = 'Done';
                     }
                 }
 

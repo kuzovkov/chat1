@@ -141,8 +141,8 @@ A.lastMessages = function(data){
  * @param fname
  * @param fdata
  */
-A.sendFile = function(f, progress, complete){
-    F.sendFile(f, '/upload', A.selected_user, A.nicname, progress, complete);
+A.sendFile = function(f, progressbar){
+    F.sendFile(f, '/upload', A.selected_user, A.nicname, progressbar);
 };
 
 /**
@@ -159,7 +159,6 @@ A.haveFile = function(data){
  * обработка сообщения от сервера что отправленный файл принят
  */
 A.fileAccepted = function(data){
-    A.iface.fileAccepted(data.to, data.fname);
     A.files.fileAccepted(data.fname);
 };
 
