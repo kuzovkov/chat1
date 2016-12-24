@@ -29,10 +29,10 @@ WRTC.call = function(){
     console.log(Date.now(), 'call');
     if (!WRTC.hang_up) return;
     WRTC.setSelectedUser(WRTC.app.selected_user);
-    WRTC.hang_up = false;
+    //WRTC.hang_up = false;
+    WRTC.setHangUp(true);
     WRTC.sendMessage({type:'intent_call'});
     WRTC.app.au.playSound(WRTC.app.iface.call_sound);
-    document.getElementById("hangupButton").style.display = 'inline-block';
 };
 
 /**
@@ -166,10 +166,10 @@ WRTC.gotIceCandidate = function(event){
  */
 WRTC.gotRemoteStream = function(event){
     console.log(Date.now(), 'gotRemoteStream: ', event.stream);
-    document.getElementById("hangupButton").style.display = 'inline-block';
     WRTC.attachStream(document.getElementById("remoteVideo"), event.stream);
     WRTC.online = true;
     WRTC.app.au.stopSound();
+    WRTC.setHangUp(true);
 };
 
 /**
@@ -192,6 +192,23 @@ WRTC.sendMessage = function(message, to){
 WRTC.hangup = function(){
     WRTC.sendMessage({type:'hangup'});
     WRTC.disconnect();
+    WRTC.setHangUp(false);
+};
+
+/**
+ * установка статуса "трубки (поднята/положена)" и видимости кнопок
+ * @param up
+ */
+WRTC.setHangUp = function(up){
+    if (up){
+        WRTC.hang_up = false;
+        document.getElementById("hangupButton").style.display = 'inline-block';
+        document.getElementById("callButton").style.display = 'none';
+    }else{
+        WRTC.hang_up = true;
+        document.getElementById("hangupButton").style.display = 'none';
+        document.getElementById("callButton").style.display = 'inline-block';
+    }
 };
 
 /**
@@ -217,19 +234,10 @@ WRTC.disconnect = function(){
         });
         WRTC.localStream == null;
     }
-    document.getElementById("callButton").style.display = 'inline-block';
-    document.getElementById("hangupButton").style.display = 'none';
     document.getElementById("localVideo").src = '';
     document.getElementById("remoteVideo").src = '';
     WRTC.app.au.stopSound();
     WRTC.setSelectedUser(null);
-};
-
-/**
- * Принятие или отклонение звонка
- */
-WRTC.confirmAnswer = function(from){
-    return confirm('Вас вызывает "'+ from+'". Принять звонок?');
 };
 
 
@@ -259,27 +267,29 @@ WRTC.gotMessage = function(data){
 
     }else if (message.type === 'hangup'){
         WRTC.disconnect();
+        closeDialogConfirm();
+        WRTC.setHangUp(false);
     }else if(message.type === 'call'){
         WRTC.answer();
     }else if(message.type === 'offer_ready'){
         WRTC.createOffer();
     }else if (message.type === 'intent_call'){
         WRTC.app.au.playSound(WRTC.app.iface.call_sound);
-        if (WRTC.confirmAnswer(from)){
+        dialogConfirm('Video chat', from + ' calling You. <br/>Answer?', function(){
             WRTC.hangup();
             WRTC.setSelectedUser(from);
             WRTC.sendMessage({type:'ready_call'});
-        }else{
+        }, function(){
             WRTC.sendMessage({type:'reject_call'}, from);
             WRTC.app.au.stopSound();
-        }
+        });
     }else if (message.type === 'ready_call'){
         WRTC.beginConnect();
     }else if (message.type === 'reject_call'){
-        document.getElementById("hangupButton").style.display = 'none';
         WRTC.setSelectedUser(null);
         WRTC.app.au.stopSound();
-        alert('Вызов отклонен');
+        WRTC.setHangUp(false);
+        dialogMessage('Video chat', 'Call was rejected');
     }
 };
 

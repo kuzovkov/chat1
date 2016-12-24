@@ -51,7 +51,6 @@ I.init = function(app){
     I.setInterfaceHandlers();
     if (!I.app.files.FILE_API){
         I.files_wrap.innerHTML = ('<p>You browser does not supported File API</p>');
-        //I.hideElem('files_wrap');
     }
     I.showMessages();
     if (window.localStorage) I.app.selected_user = window.localStorage.getItem('selected_user');
@@ -60,8 +59,12 @@ I.init = function(app){
 /**
  * тестовая функция
  */
-I.test = function(){
-
+I.testf = function(){
+    console.log('test');
+    //dialogConfirm('title','message', function(){console.log('ok');}, function(){console.log('cancel');});
+    //setTimeout(closeDialogConfirm, 5000);
+     //dialogMessage('title','message wqseqw', function(){console.log('ok');});
+    //setTimeout(closeDialogMessage, 5000);
 };
 
 /**
@@ -156,12 +159,12 @@ I.setInterfaceHandlers = function(){
         note_close: {event:'click', handler: I.hideNote },
         send_btn: {event:'click', handler: I.btnSendHandler},
         exit_btn: {event:'click', handler: I.exit},
-        test: {event:'click', handler: I.test},
+        test: {event:'click', handler: I.testf},
         files_input: {event:'change', handler: F.handlerFileSelect},
         send_files_btn: {event:'click', handler: I.sendFiles},
         call_button: {event: 'click', handler: I.app.wrtc.call},
         hangup_button: {event: 'click', handler: I.app.wrtc.hangup},
-        cancel_button: {event: 'click', handler: I.clearSelectedFiles},
+        cancel_button: {event: 'click', handler: I.clearSelectedFiles}
     };
     for (var el in handlers){
         if (I[el] != null && I[el] != undefined){
