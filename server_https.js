@@ -15,7 +15,8 @@ var bodyParser = require('body-parser');
 var https = require('https');
 var server = https.createServer(options, app);
 var io = require('socket.io')(server);
-var port = 8000;
+var port_default = 443;
+var port = (process.argv.length > 2)? parseInt(process.argv[2]) : port_default;
 var Helper = require('./modules/helper');
 var chat = require('./modules/chat');
 global.chat = chat;
@@ -25,10 +26,28 @@ var Handler = require('./modules/handler');
 var cons = require('consolidate');
 
 
-
 server.listen(port,function(){
     console.log('Server start at port '+port+ ' ' + Helper.getTime());
+    /*сброс привилегий*/
+    if (process.getuid && process.setuid) {
+        console.log('Current uid: ' + process.getuid());
+        if (process.geteuid)
+            console.log('Current euid: ' + process.geteuid());
+        try {
+            process.setuid('www-data');
+            console.log('New uid: ' + process.getuid());
+            if (process.geteuid && process.seteuid){
+                process.seteuid('www-data');
+                console.log('New euid: ' + process.geteuid());
+            }
+        }
+        catch (err) {
+            console.log('Failed to set uid: ' + err);
+        }
+    }
 });
+
+
 
 /* настройки для рендеринга шаблонов*/
 app.engine('html', cons.swig);
