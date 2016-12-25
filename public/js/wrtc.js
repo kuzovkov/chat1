@@ -5,13 +5,12 @@ navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || 
 
 
 var WRTC = {};
+WRTC.pc_config = null;
 
 WRTC.init = function(app){
     WRTC.app = app;
     WRTC.pc = null; // PeerConnection
     WRTC.localStream = null;
-    //var pc_config = {"iceServers": [{"url": "turn:drakmail%40delta.pm@numb.viagenie.ca:3478", "credential": "PLACE_HERE_YOUR_PASSWORD"}, {"url": "stun:stun.l.google.com:19302"}]};
-    WRTC.pc_config = null;
     WRTC.online = false;
     WRTC.hang_up = true; /*повешена ли трубка*/
     WRTC.mediaOptions = { audio: true, video: true };
@@ -26,10 +25,9 @@ WRTC.init = function(app){
  * отправка вызываемому абоненту приглашения к связи
  */
 WRTC.call = function(){
-    console.log(Date.now(), 'call');
+    console.log(Date.now(), 'call', 'pc_config', WRTC.pc_config);
     if (!WRTC.hang_up) return;
     WRTC.setSelectedUser(WRTC.app.selected_user);
-    //WRTC.hang_up = false;
     WRTC.setHangUp(true);
     WRTC.sendMessage({type:'intent_call'});
     WRTC.app.au.playSound(WRTC.app.iface.call_sound);

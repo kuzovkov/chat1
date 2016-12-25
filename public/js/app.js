@@ -11,9 +11,9 @@ A.init = function(){
     A.socket.init(A);
     A.files = F;
     A.files.init(A);
-    A.setEventHandlers();
     A.wrtc = WRTC;
     A.wrtc.init(A);
+    A.setEventHandlers();
     A.iface = I;
     A.iface.init(A);
     A.au = AU;
@@ -97,6 +97,10 @@ A.userLost = function(data){
  */
 A.refreshUsersOnline = function(data){
     console.log(data.users_online);
+    console.log(data.ice);
+    if (data.ice){
+        A.wrtc.pc_config = JSON.parse(window.atob(data.ice));
+    }
     A.iface.refreshUsersOnline(data.users_online);
 };
 
