@@ -4,7 +4,7 @@
 
 var fs = require('fs');
 var options = {
-    key: fs.readFileSync('cert/key.pem'),
+    key: fs.readFileSync('cert/privkey.pem'),
     cert: fs.readFileSync('cert/cert.pem')
 };
 var express = require('express');

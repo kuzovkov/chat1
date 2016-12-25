@@ -1,0 +1,1 @@
+/etc/letsencrypt/live/kuzovkov12.ru
