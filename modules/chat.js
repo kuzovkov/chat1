@@ -1,4 +1,3 @@
-var base64 = require('./base64');
 var fs = require('fs');
 var md5 = require('./md5');
 
@@ -149,7 +148,8 @@ Chat.getLastMessages = function(user1, user2, lefttime){
  * @param callback функция обратного вызова в которую передается результат
  */
 Chat.saveFile = function(from, to, fname, buffer, callback){
-    var encname = base64.base64_encode(fname);
+    var encname = new Buffer(fname);
+    encname = encname.toString('base64');
     var filename = Chat.USERS_FILES_DIR + '/' + encname;
 
     fs.writeFile(filename, buffer, function(err){

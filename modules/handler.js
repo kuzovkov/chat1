@@ -1,6 +1,11 @@
 /*серверный модуль обработчиков событий при взаимодействии клиентов и сервера*/
 var httpRequest = require('./httprequest');
+var fs = require('fs');
 
+function getIce(){
+    var b = (fs.existsSync('ice.json'))? new Buffer(fs.readFileSync('ice.json', 'utf8')) : new Buffer('null');
+    return b.toString('base64');
+}
 
 function user_connect(socket, chat){
     socket.on('user_connect', function(data){
@@ -10,7 +15,7 @@ function user_connect(socket, chat){
         console.log(users_online);
         socket.broadcast.emit('new_user', {'user':nicname});
         socket.broadcast.emit('users_online', {users_online:users_online});
-        socket.emit('users_online', {users_online:users_online});
+        socket.emit('users_online', {users_online:users_online, ice: getIce()});
     });
 }
 
