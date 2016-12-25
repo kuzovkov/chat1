@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 
 /*сервер*/
-
+var domain = 'kuzovkov12.ru';
 var fs = require('fs');
+var key_file = (fs.existsSync('cert/' + domain + '/privkey.pem'))? 'cert/' + domain + '/privkey.pem' : 'cert/key.pem';
+var cert_file = (fs.existsSync('cert/' + domain + '/cert.pem'))? 'cert/' + domain + '/cert.pem' : 'cert/cert.pem';
 var options = {
-    key: fs.readFileSync('cert/privkey.pem'),
-    cert: fs.readFileSync('cert/cert.pem')
+    key: fs.readFileSync(key_file),
+    cert: fs.readFileSync(cert_file)
 };
 var express = require('express');
 var app = express();
