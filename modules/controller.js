@@ -54,7 +54,8 @@ function download_file(req, res){
         var fname = fs.realpathSync(global.chat.USERS_FILES_DIR + path.sep + file_meta.encname);
         console.log(fname);
         if (fs.existsSync(fname)){
-            res.header('Content-Disposition', 'attachment; filename=' + file_meta.origname);
+        console.log('origname',file_meta.origname);    
+	res.header('Content-Disposition', 'attachment; filename=' + file_meta.origname);
             res.sendFile(fname);
         }else{
             console.log('not found');
