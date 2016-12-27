@@ -36,6 +36,7 @@ A.setEventHandlers= function(){
     A.socket.setEventHandler('file_accepted', A.fileAccepted);
     A.socket.setEventHandler('you_files', A.incomingFiles);
     A.socket.setEventHandler('wrtc_message', A.gotWRTCMessage);
+    A.socket.setEventHandler('upload_error', A.uploadError);
 };
 
 /**
@@ -164,6 +165,13 @@ A.haveFile = function(data){
  */
 A.fileAccepted = function(data){
     A.files.fileAccepted(data.fname);
+};
+
+/**
+ * обработка сообщения от сервера что при отправке файла произошла ошибка
+ */
+A.uploadError = function(data){
+    A.files.uploadError(data.fname);
 };
 
 /**

@@ -72,6 +72,10 @@ I.testf = function(){
  */
 I.sendFiles = function(){
     if (!I.CHAT_ENABLE) return;
+    if (F.choosen_files.length == 0){
+        I.showNote('No files was been choosed');
+        return;
+    }
     I.hideElem(I.send_files_btn);
     I.hideElem(I.cancel_button);
     I.hideElem(I.files_input);
@@ -121,7 +125,7 @@ I.refreshFilesLinks = function(data){
         html.push('<li>');
         html.push(['<img id="/file-del/', secret, '" title="Delete" class="icon-small delete-file" src="/img/cancel-circle.svg"/>'].join(''));
         html.push('&nbsp;');
-        html.push(['<a href="/file/', secret, '" title="Download">', fname, '</a>'].join(''));
+        html.push(['<a href="/file/', secret, '" title="Download" target="_blank">', fname, '</a>'].join(''));
         html.push('</li>');
     }
     I.incoming_files.innerHTML = html.join('');
