@@ -55,7 +55,6 @@ function download_file(req, res){
         var fname = fs.realpathSync(global.chat.USERS_FILES_DIR + path.sep + file_meta.encname);
         console.log(fname);
         if (fs.existsSync(fname)){
-            console.log('origname', file_meta.origname);
             res.header('Content-Disposition', 'attachment; filename=' + urlencode(file_meta.origname));
             res.header('Content-Type', 'application/octet-stream');
             res.sendFile(fname);
