@@ -22,8 +22,8 @@ $(function() {
 
         $( "#tabs" ).tabs();
 
-         $( "#video-wrap .localVideo" ).draggable().resizable();
-        $( "#video-wrap .remoteVideo" ).draggable().resizable();
+         $( "#video-wrap .localVideo" ).draggable({ containment: ".right", scroll: false }).resizable();
+        $( "#video-wrap .remoteVideo" ).draggable({ containment: ".right", scroll: false }).resizable();
 
 
     diagConfirm = $( "#dialog-confirm" ).dialog({

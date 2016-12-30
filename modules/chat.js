@@ -150,11 +150,16 @@ Chat.getLastMessages = function(user1, user2, lefttime){
 Chat.saveFile = function(from, to, fname, buffer, callback){
     var encname = new Buffer(fname);
     encname = encname.toString('base64');
+    encname = encname.replace('/', '-');
     var filename = Chat.USERS_FILES_DIR + '/' + encname;
 
     fs.writeFile(filename, buffer, function(err){
         if (!err){
             fs.stat(filename, function(err, info){
+                if (err){
+                    callback(false);
+                    return;
+                }
                 var timestamp = (new Date()).getTime();
                 var fsize = info['size'];
                 var secret = md5([from, to, encname, fsize].join(''));
@@ -163,7 +168,11 @@ Chat.saveFile = function(from, to, fname, buffer, callback){
                 }
                 callback(fsize);
             });
-        }else{ console.log(err);}
+        }else{
+            console.log(err);
+            callback(false);
+            return;
+        }
     });
 }
 
@@ -194,7 +203,9 @@ Chat.getFilesMetadataByNicname = function(nicname){
     var res = [];
     for (var i = 0; i < Chat.files_meta.length; i++){
         if (Chat.files_meta[i]['to'] == nicname){
-            res.push(Chat.files_meta[i]);
+            if (fs.existsSync(Chat.USERS_FILES_DIR + '/' + Chat.files_meta[i]['encname'])){
+                res.push(Chat.files_meta[i]);
+            }
         }
     }
     return res;

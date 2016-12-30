@@ -5,8 +5,13 @@ body {background-color: #060200;}
 p, input, div, button {padding: 0; margin: 0;}
 @-moz-document url-prefix() { ul { margin:0; padding:0; } }
 .cls { clear: both;}
-.central {  position: absolute;  width: 600px;  height: 300px;  top: 50%;  left: 50%;  margin-top: -150px;  margin-left: -300px;  }
-.error { color: red;  }
+.input-nicname { width: 98vw; height: 98vh; text-align: center; margin: auto; position: relative;}
+.input-nicname form {width: 50%; min-width: 800px; height: 300px; margin: 45vh auto auto auto;}
+.input-nicname label {color: #f9f2bd; font-size: 2.0em;}
+.input-nicname input {color: #666; font-size: 2.0em; botder-bottom: 1px solid #f9f2bd; border-right: 2px solid #f9f2bd; }
+.header {width: 98vw; height: 10vh; position: absolute; top: 0; left: 0;}
+.input-nicname button {font-size: 2.0em; background-color: #f9f2bd; cursor: pointer;}
+.error { color: red; font-size: 2.0em;}
 .content-wrapper {  margin: 0;  height: 100%;}
 .align-right { position: absolute;  right: 0;  top: 0;  height: 100%;  }
 .red-border {border: 1px solid red;}
@@ -19,7 +24,6 @@ img {margin: 0; padding: 0;}
 button {text-align: center;}
 .icon{width: 32px; height: 32px;}
 .icon-small{ width: 16px; height: 16px; }
-
 
 
 @media screen and (min-width: 400px){

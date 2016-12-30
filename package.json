@@ -10,12 +10,13 @@
     "express": "*",
     "express-fileupload": "0.0.5",
     "socket.io": "^1.7.1",
-    "swig": "^1.4.2"
+    "swig": "^1.4.2",
+    "urlencode": "^1.1.0"
   },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server_https.js"
   },
   "repository": {
     "type": "git",

@@ -1,14 +1,21 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    <div class="central">
-        <div class="error">{% if message %}{{message}}{% endif %}</div>
-        <form method="post" action="/choosenicname">
-            Choose You NicName: <input type="text" name="nicname"/>
-            <button>Choose</button>
-        </form>
 
-    </div>
+        <div class="input-nicname ui-widget-content">
+
+            <form method="post" action="/choosenicname">
+                <div class="error">{% if message %}{{message}}{% endif %}</div>
+                <label>Choose You NicName: </label>
+                <div>
+                    <input type="text" name="nicname"/>
+                    <button>Choose</button>
+                </div>
+            </form>
+            <div class="header ui-widget-header">
+                <h1>Free chat without registration</h1>
+            </div>
+        </div>
 
 <script>
     if (!navigator.cookieEnabled) {

@@ -3,7 +3,7 @@
 **/
 var fs = require('fs');
 var path = require('path');
-var url = require('url');
+var urlencode = require('urlencode');
 
 
 /**
@@ -55,11 +55,8 @@ function download_file(req, res){
         var fname = fs.realpathSync(global.chat.USERS_FILES_DIR + path.sep + file_meta.encname);
         console.log(fname);
         if (fs.existsSync(fname)){
-            var b = new Buffer(file_meta.origname);
-            var origname = b.toString('utf8');
-            origname = url.format(origname);
-            console.log(origname);
-            res.header('Content-Disposition', 'attachment; filename=' + origname);
+            res.header('Content-Disposition', 'attachment; filename=' + urlencode(file_meta.origname));
+            res.header('Content-Type', 'application/octet-stream');
             res.sendFile(fname);
         }else{
             console.log('not found');
@@ -111,8 +108,12 @@ function upload_file(req,res){
     global.chat.saveFile(from, to, fname, buffer, function(fsize){
         var socketTo = global.chat.getSocket(to);
         var socketFrom = global.chat.getSocket(from);
-        socketTo.emit('have_file', {from: from, fname: fname, fsize: fsize});
-        socketFrom.emit('file_accepted', {to: to, fname: fname});
+        if (fsize === false){
+            socketFrom.emit('upload_error', {fname: fname});
+        }else{
+            socketTo.emit('have_file', {from: from, fname: fname, fsize: fsize});
+            socketFrom.emit('file_accepted', {to: to, fname: fname});
+        }
     });
 
 }

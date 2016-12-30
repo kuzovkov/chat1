@@ -66,6 +66,21 @@ F.fileAccepted = function(fname){
 };
 
 /**
+ * обработка сообщения от сервера что что при отправке файла произошла ошибка
+ * @param fname
+ */
+F.uploadError = function(fname){
+    for( var i in F.choosen_files){
+        if (F.choosen_files[i].name == fname)
+        {
+            F.choosen_files.splice(i,1);
+        }
+    }
+    F.app.iface.fillFilesList(F.choosen_files);
+    dialogMessage('Chat1', 'Ошибка при отправке файла ' + fname);
+};
+
+/**
  * удаление присланного файла
  * @param e
  */
