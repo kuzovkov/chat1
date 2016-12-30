@@ -3,6 +3,7 @@
 **/
 var fs = require('fs');
 var path = require('path');
+var url = require('url');
 
 
 /**
@@ -54,7 +55,11 @@ function download_file(req, res){
         var fname = fs.realpathSync(global.chat.USERS_FILES_DIR + path.sep + file_meta.encname);
         console.log(fname);
         if (fs.existsSync(fname)){
-            res.header('Content-Disposition', 'attachment; filename=' + file_meta.origname);
+            var b = new Buffer(file_meta.origname);
+            var origname = b.toString('utf8');
+            origname = url.format(origname);
+            console.log(origname);
+            res.header('Content-Disposition', 'attachment; filename=' + origname);
             res.sendFile(fname);
         }else{
             console.log('not found');
