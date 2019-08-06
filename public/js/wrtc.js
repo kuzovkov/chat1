@@ -86,7 +86,8 @@ WRTC.attachStream = function(el, stream) {
     if (!myURL) {
         el.src = stream;
     } else {
-        el.src = myURL.createObjectURL(stream);
+        //el.src = myURL.createObjectURL(stream);
+        el.srcObject = stream;
     }
 };
 
