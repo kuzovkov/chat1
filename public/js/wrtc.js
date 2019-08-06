@@ -257,11 +257,16 @@ WRTC.gotMessage = function(data){
     }
     else if (WRTC.pc != null && message.type === 'candidate') {
         //var candidate = new IceCandidate({sdpMLineIndex: message.label, candidate: message.candidate});
+        var candidate=null;
         try{
-            var candidate = new IceCandidate(message);
+            candidate = new IceCandidate(message);
             WRTC.pc.addIceCandidate(candidate);
         }catch (e){
-            console.log(e);
+            try{
+                candidate = new IceCandidate({sdpMLineIndex: message.label, candidate: message.candidate});
+            }catch (e){
+                console.log(e);
+            }
         }
 
     }else if (message.type === 'hangup'){
