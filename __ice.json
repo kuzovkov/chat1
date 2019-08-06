@@ -1,0 +1,8 @@
+{
+    "iceServers":
+        [
+            {"url": "stun:stun.l.google.com:19302"},
+	    {"url": "stun:stun.phoneserve.com"},
+            {"url":"turn:sania@188.187.188.57:3478", "credential":"P@ssw0rd", "username": "sania"}
+        ]
+}
