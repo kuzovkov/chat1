@@ -264,6 +264,7 @@ WRTC.gotMessage = function(data){
         }catch (e){
             try{
                 candidate = new IceCandidate({sdpMLineIndex: message.label, candidate: message.candidate});
+                WRTC.pc.addIceCandidate(candidate);
             }catch (e){
                 console.log(e);
             }
