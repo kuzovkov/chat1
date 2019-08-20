@@ -11,6 +11,7 @@ WRTC.init = function(app){
     WRTC.app = app;
     WRTC.pc = null; // PeerConnection
     WRTC.localStream = null;
+    WRTC.screenStream = null;
     WRTC.online = false;
     WRTC.hang_up = true; /*повешена ли трубка*/
     WRTC.mediaOptions = { audio: true, video: true };
@@ -71,7 +72,7 @@ WRTC.gotStreamCaller = function(stream) {
     WRTC.localStream = stream;
     console.log(Date.now(), 'gotStream:', stream);
     WRTC.pc = new PeerConnection(WRTC.pc_config);
-    WRTC.pc.addStream(stream);
+    WRTC.addStreamToRTCPeerConnection(stream);
     WRTC.pc.onicecandidate = WRTC.gotIceCandidate;
     WRTC.pc.onaddstream = WRTC.gotRemoteStream;
 };
@@ -82,6 +83,7 @@ WRTC.gotStreamCaller = function(stream) {
  * @param stream медиапоток
  */
 WRTC.attachStream = function(el, stream) {
+    console.log('attachStream', stream);
     var myURL = window.URL || window.webkitURL;
     if (!myURL) {
         el.src = stream;
@@ -99,9 +101,10 @@ WRTC.gotStreamCalle = function(stream) {
     WRTC.attachStream(document.getElementById("localVideo"), stream);
     WRTC.localStream = stream;
     WRTC.pc = new PeerConnection(WRTC.pc_config);
-    WRTC.pc.addStream(stream);
+    WRTC.addStreamToRTCPeerConnection(stream);
     WRTC.pc.onicecandidate = WRTC.gotIceCandidate;
     WRTC.pc.onaddstream = WRTC.gotRemoteStream;
+    WRTC.pc.ontrack = WRTC.gotRemoteTracks;
     WRTC.sendMessage({type:'offer_ready'});
 };
 
@@ -125,6 +128,7 @@ WRTC.createOffer = function() {
  */
 WRTC.createAnswer = function() {
     console.log(Date.now(), 'createAnswer');
+    console.log(Date.now(), 'signalingState', WRTC.pc.signalingState);
     WRTC.pc.createAnswer(
         WRTC.gotLocalDescription,
         function(error) { console.log(error) },
@@ -165,10 +169,32 @@ WRTC.gotIceCandidate = function(event){
  */
 WRTC.gotRemoteStream = function(event){
     console.log(Date.now(), 'gotRemoteStream: ', event.stream);
+    console.log(Date.now(), 'gotRemoteStream(audio tracks): ', event.stream.getAudioTracks());
     WRTC.attachStream(document.getElementById("remoteVideo"), event.stream);
     WRTC.online = true;
     WRTC.app.au.stopSound();
     WRTC.setHangUp(true);
+    document.getElementById("screenshareButton").style.display = 'inline-block';
+    document.getElementById("videoOff").style.display = 'inline-block';
+    document.getElementById("audioOff").style.display = 'inline-block';
+};
+
+/**
+ * обработчик получения объектом RTCPeerConnection
+ * удаленного трека медиапотока
+ * На событие "track", вместо обработчика устаревшего события "addstream"
+ * @param event объект события
+ */
+WRTC.gotRemoteTracks = function(event){
+    console.log(Date.now(), 'gotRemoteStream: ', event.streams);
+    console.log(Date.now(), 'gotRemoteStream(audio tracks): ', event.streams[0].getAudioTracks());
+    WRTC.attachStream(document.getElementById("remoteVideo"), event.streams[0]);
+    WRTC.online = true;
+    WRTC.app.au.stopSound();
+    WRTC.setHangUp(true);
+    document.getElementById("screenshareButton").style.display = 'inline-block';
+    document.getElementById("videoOff").style.display = 'inline-block';
+    document.getElementById("audioOff").style.display = 'inline-block';
 };
 
 /**
@@ -192,6 +218,9 @@ WRTC.hangup = function(){
     WRTC.sendMessage({type:'hangup'});
     WRTC.disconnect();
     WRTC.setHangUp(false);
+    document.getElementById("screenshareButton").style.display = 'none';
+    document.getElementById("videoOff").style.display = 'none';
+    document.getElementById("videoOn").style.display = 'none';
 };
 
 /**
@@ -231,10 +260,15 @@ WRTC.disconnect = function(){
         WRTC.localStream.getAudioTracks().forEach(function (track) {
             track.stop();
         });
-        WRTC.localStream == null;
+        WRTC.localStream = null;
     }
     document.getElementById("localVideo").src = '';
     document.getElementById("remoteVideo").src = '';
+    document.getElementById("screenshareButton").style.display = 'none';
+    document.getElementById("videoOff").style.display = 'none';
+    document.getElementById("videoOn").style.display = 'none';
+    document.getElementById("audioOff").style.display = 'none';
+    document.getElementById("audioOn").style.display = 'none';
     WRTC.app.au.stopSound();
     WRTC.setSelectedUser(null);
 };
@@ -312,6 +346,198 @@ WRTC.setSelectedUser = function(user){
             window.localStorage.removeItem('videochat_user');
         }
 };
+
+/**
+ * Обработчик кнопки расшаривания экрана
+ */
+WRTC.screenShare = function(){
+    if(navigator.getDisplayMedia || navigator.mediaDevices.getDisplayMedia) {
+        if(navigator.mediaDevices.getDisplayMedia) {
+            navigator.mediaDevices.getDisplayMedia({video: true}).then(function (stream) {
+                WRTC.onGettingScreenSteam(stream);
+            }, WRTC.getDisplayMediaError).catch(WRTC.getDisplayMediaError);
+        } else if(navigator.getDisplayMedia) {
+            navigator.getDisplayMedia({video: true}).then(function (stream) {
+                WRTC.onGettingScreenSteam(stream);
+            }, getDisplayMediaError).catch(getDisplayMediaError);
+        }
+    } else {
+        if (DetectRTC.browser.name === 'Chrome') {
+            if (DetectRTC.browser.version == 71) {
+                dialogMessage('Please enable "Experimental WebPlatform" flag via chrome://flags.');
+            } else if (DetectRTC.browser.version < 71) {
+                dialogMessage('Please upgrade your Chrome browser.');
+            } else {
+                dialogMessage('Please make sure that you are not using Chrome on iOS.');
+            }
+        }
+
+        if (DetectRTC.browser.name === 'Firefox') {
+            dialogMessage('Please upgrade your Firefox browser.');
+        }
+
+        if (DetectRTC.browser.name === 'Edge') {
+            dialogMessage('Please upgrade your Edge browser.');
+        }
+
+        if (DetectRTC.browser.name === 'Safari') {
+            dialogMessage('Safari does NOT supports getDisplayMedia API yet.');
+        }
+    }
+};
+
+/**
+ * Обработка ошибок получения медия потока с экрана
+ * @param error
+ */
+WRTC.getDisplayMediaError = function(error){
+    if (location.protocol === 'http:') {
+        dialogMessage('Please test this WebRTC experiment on HTTPS.');
+    } else {
+        console.log(error);
+        dialogMessage(error.toString());
+    }
+};
+
+/**
+ * Обработка получения потока с экрана
+ * @param stream
+ */
+WRTC.onGettingScreenSteam = function(stream){
+    WRTC.screenStream = stream;
+    WRTC.addStreamStopListener(stream, WRTC.onScreenShareEnded);
+    document.getElementById("screenshareButton").style.display = 'none';
+    WRTC.removeStreamFromRTCPeerConnection(WRTC.localStream);
+    var audiotracks = WRTC.localStream.getAudioTracks();
+    console.log('audio tracks', audiotracks);
+    if (audiotracks.length > 0){
+        console.log('add audio track', audiotracks[0]);
+        WRTC.screenStream.addTrack(audiotracks[0]);
+    }
+    WRTC.addStreamToRTCPeerConnection(WRTC.screenStream);
+    WRTC.createOffer();
+};
+
+/**
+ * Установка обработчика прекращения расшаривания экрана
+ * @param stream
+ * @param callback
+ */
+WRTC.addStreamStopListener = function (stream, callback) {
+    stream.addEventListener('ended', function() {
+        callback();
+        callback = function() {};
+    }, false);
+    stream.addEventListener('inactive', function() {
+        callback();
+        callback = function() {};
+    }, false);
+    stream.getTracks().forEach(function(track) {
+        track.addEventListener('ended', function() {
+            callback();
+            callback = function() {};
+        }, false);
+        track.addEventListener('inactive', function() {
+            callback();
+            callback = function() {};
+        }, false);
+    });
+};
+
+/**
+ * Обработка прекращения расшаривания экрана
+ */
+WRTC.onScreenShareEnded = function(){
+    console.log('Screen share stopped');
+    document.getElementById("screenshareButton").style.display = 'inline-block';
+    WRTC.removeStreamFromRTCPeerConnection(WRTC.screenStream);
+    WRTC.addStreamToRTCPeerConnection(WRTC.localStream);
+    WRTC.screenStream = null;
+    WRTC.createOffer();
+};
+
+/**
+ * Wrap over ToRTCPeerConnection.addStream to avoid
+ * deprecated issues
+ * @param stream
+ */
+WRTC.addStreamToRTCPeerConnection = function(stream){
+    try{
+        WRTC.pc.addStream(stream);
+    }catch (e){
+        stream.getTracks().forEach(function(track) {
+            WRTC.pc.addTrack(track, stream);
+        });
+    }
+};
+
+/**
+ * Wrap over ToRTCPeerConnection.removeStream to avoid
+ * deprecated issues
+ * @param stream
+ */
+WRTC.removeStreamFromRTCPeerConnection = function(stream){
+    try{
+        WRTC.pc.removeStream(stream);
+    }catch (e){
+        WRTC.pc.getSenders().forEach(function(sender){
+            stream.getTracks().forEach(function(track){
+                if(track == sender.track){
+                    WRTC.pc.removeTrack(sender);
+                }
+            })
+        });
+    }
+};
+
+/**
+ * Обработчик кнопки выключения видео
+ */
+WRTC.videoOff = function(){
+    WRTC.localStream.getVideoTracks().forEach(function(track){
+       track.enabled = false;
+    });
+    document.getElementById("videoOn").style.display = 'inline-block';
+    document.getElementById("videoOff").style.display = 'none';
+    WRTC.createOffer();
+};
+
+/**
+ * Обработчик кнопки включения видео
+ */
+WRTC.videoOn = function(){
+    WRTC.localStream.getVideoTracks().forEach(function(track){
+        track.enabled = true;
+    });
+    document.getElementById("videoOff").style.display = 'inline-block';
+    document.getElementById("videoOn").style.display = 'none';
+    WRTC.createOffer();
+};
+
+/**
+ * Обработчик кнопки выключения звука
+ */
+WRTC.audioOff = function(){
+    WRTC.localStream.getAudioTracks().forEach(function(track){
+        track.enabled = false;
+    });
+    document.getElementById("audioOn").style.display = 'inline-block';
+    document.getElementById("audioOff").style.display = 'none';
+    WRTC.createOffer();
+};
+
+/**
+ * Обработчик кнопки включения звука
+ */
+WRTC.audioOn = function(){
+    WRTC.localStream.getAudioTracks().forEach(function(track){
+        track.enabled = true;
+    });
+    document.getElementById("audioOff").style.display = 'inline-block';
+    document.getElementById("audioOn").style.display = 'none';
+    WRTC.createOffer();
+};
+
 
 
 
