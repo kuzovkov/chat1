@@ -13,6 +13,8 @@ WRTC.init = function(app){
     WRTC.localStream = null;
     WRTC.screenStream = null;
     WRTC.online = false;
+    WRTC.chat_datachannel = null; /*RTCDataChannel для чата*/
+    WRTC.file_datachannel = null; /*RTCDataChannel для файлов*/
     WRTC.hang_up = true; /*повешена ли трубка*/
     WRTC.mediaOptions = { audio: true, video: true };
     WRTC.selected_user = null; /*абонент для видеочата*/
@@ -75,6 +77,12 @@ WRTC.gotStreamCaller = function(stream) {
     WRTC.addStreamToRTCPeerConnection(stream);
     WRTC.pc.onicecandidate = WRTC.gotIceCandidate;
     WRTC.pc.onaddstream = WRTC.gotRemoteStream;
+    WRTC.chat_datachannel = WRTC.pc.createDataChannel("chat", {negotiated: true, id: 0, ordered: true});
+    WRTC.file_datachannel = WRTC.pc.createDataChannel("file", {negotiated: true, id: 1, ordered: true});
+    WRTC.chat_datachannel.onopen = WRTC.chatDataChannelOnOpen;
+    WRTC.chat_datachannel.onmessage = WRTC.chatDataChannelOnMessage;
+    WRTC.file_datachannel.onopen = WRTC.fileDataChannelOnOpen;
+    WRTC.file_datachannel.onmessage = WRTC.fileDataChannelOnMessage;
 };
 
 /**
@@ -106,6 +114,12 @@ WRTC.gotStreamCalle = function(stream) {
     WRTC.pc.onaddstream = WRTC.gotRemoteStream;
     WRTC.pc.ontrack = WRTC.gotRemoteTracks;
     WRTC.sendMessage({type:'offer_ready'});
+    WRTC.chat_datachannel = WRTC.pc.createDataChannel("chat", {negotiated: true, id: 0, ordered: true});
+    WRTC.file_datachannel = WRTC.pc.createDataChannel("file", {negotiated: true, id: 1, ordered: true});
+    WRTC.chat_datachannel.onopen = WRTC.chatDataChannelOnOpen;
+    WRTC.chat_datachannel.onmessage = WRTC.chatDataChannelOnMessage;
+    WRTC.file_datachannel.onopen = WRTC.fileDataChannelOnOpen;
+    WRTC.file_datachannel.onmessage = WRTC.fileDataChannelOnMessage;
 };
 
 
@@ -250,6 +264,14 @@ WRTC.disconnect = function(){
     if(WRTC.pc != null){
         WRTC.pc.close();
         WRTC.pc = null;
+    }
+    if(WRTC.chat_datachannel != null){
+        WRTC.chat_datachannel.close();
+        WRTC.chat_datachannel = null;
+    }
+    if(WRTC.file_datachannel != null){
+        WRTC.file_datachannel.close();
+        WRTC.file_datachannel = null;
     }
     if (WRTC.localStream != null){
 
@@ -536,6 +558,45 @@ WRTC.audioOn = function(){
     document.getElementById("audioOff").style.display = 'inline-block';
     document.getElementById("audioOn").style.display = 'none';
     WRTC.createOffer();
+};
+
+/**
+ * Обработчик создания chat datachannel
+ * @param event
+ */
+WRTC.chatDataChannelOnOpen = function(event) {
+    WRTC.chat_datachannel.send(['Hi ', WRTC.selected_user, '!'].join(' '));
+};
+
+/**
+ * Обработчик приема данных через chat datachannel
+ * @param event
+ */
+WRTC.chatDataChannelOnMessage = function(event) {
+    var timestamp = (new Date()).getTime();
+    var message = {created: timestamp, from:WRTC.selected_user, to: WRTC.app.nicname, message:event.data};
+    console.log(message);
+    WRTC.app.iface.addMessage(message);
+};
+
+/**
+ * Обработчик создания file datachannel
+ * @param event
+ */
+WRTC.fileDataChannelOnOpen = function(event) {
+    console.log('file datachannel open');
+};
+
+/**
+ * Обработчик приема данных через file datachannel
+ * @param event
+ */
+WRTC.fileDataChannelOnMessage = function(event) {
+    if( typeof event.data === 'string') {
+        WRTC.app.filesp2p.startDownload(event.data);
+    } else {
+        WRTC.app.filesp2p.progressDownload(event.data);
+    }
 };
 
 

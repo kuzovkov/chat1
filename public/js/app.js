@@ -11,6 +11,8 @@ A.init = function(){
     A.socket.init(A);
     A.files = F;
     A.files.init(A);
+    A.filesp2p = Fp2p;
+    A.filesp2p.init(A);
     A.wrtc = WRTC;
     A.wrtc.init(A);
     A.setEventHandlers();
@@ -60,7 +62,17 @@ A.disconnect = function(){
  */
 A.sendUserMessage = function(message){
     if (A.selected_user == null) return;
-    A.socket.send('user_message', {message: message, to:A.selected_user});
+    /**если сообщение пользователю с которым на созвоне посылаем сообщение через p2p иначе через сервер**/
+    if (A.wrtc.chat_datachannel != null && A.selected_user == A.wrtc.selected_user){
+        var timestamp = (new Date()).getTime();
+        var messageObject = {created: timestamp, from: WRTC.app.nicname, to: WRTC.selected_user, message:message};
+        A.iface.addMessage(messageObject);
+        A.wrtc.chat_datachannel.send(message);
+        console.log('send message p2p');
+    }else{
+        A.socket.send('user_message', {message: message, to:A.selected_user});
+        console.log('send message across server');
+    }
 };
 
 /**
@@ -143,11 +155,18 @@ A.lastMessages = function(data){
 
 /**
  * отправка файла на сервер
- * @param fname
- * @param fdata
+ * @param f
+ * @param progressbar
  */
 A.sendFile = function(f, progressbar){
-    F.sendFile(f, '/upload', A.selected_user, A.nicname, progressbar);
+    if (A.wrtc.file_datachannel != null && A.selected_user == A.wrtc.selected_user){
+        console.log('send file p2p');
+        Fp2p.sendFile(f, A.wrtc.file_datachannel, progressbar);
+    }else{
+        console.log('send file to server');
+        F.sendFile(f, '/upload', A.selected_user, A.nicname, progressbar);
+    }
+
 };
 
 /**

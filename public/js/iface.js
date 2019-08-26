@@ -2,7 +2,7 @@ var I = {};
 
 I.app = null;
 I.messages = [];
-I.MAX_MESSAGES_LEN = 500;
+I.MAX_MESSAGES_LEN = 1000;
 I.NOTE_TIME = 30000; /*время показа заметки*/
 I.timeout = null;
 I.HISTORY_LEFTTIME = 48; /*длина истории сообщений в часах*/
@@ -141,6 +141,24 @@ I.refreshFilesLinks = function(data){
 };
 
 /**
+ * добавление в список загруженных файлов при загрузке их p2p
+ * @param anchor
+ */
+I.appendIncomingFile = function(anchor){
+    var ul = document.querySelector('#incoming-files');
+    var img = document.createElement('img');
+    img.src = "/img/cancel-circle.svg";
+    img.className = "icon-small delete-file";
+    img.title = "Double click to delete";
+    var li = document.createElement('li');
+    li.id = UUID4();
+    li.appendChild(img);
+    li.appendChild(anchor);
+    li.ondblclick = function(e){ ul.removeChild(document.getElementById(this.id));};
+    ul.appendChild(li);
+};
+
+/**
  * очистка выбранных файлов
  */
 I.clearSelectedFiles = function(){
@@ -199,6 +217,7 @@ I.addMessage = function(message){
     if (I.messages.length > I.MAX_MESSAGES_LEN){
         I.messages.splice(0, I.messages.length - I.MAX_MESSAGES_LEN);
     }
+    window.localStorage.setItem('messages', JSON.stringify(I.messages));
     I.showMessages();
 };
 
@@ -222,11 +241,18 @@ I.keyPressHandler = function(e){
 };
 
 /**
- * обновление истории сообщений при получении ее от серовера
+ * обновление истории сообщений при получении ее от сервера
  * @param messages
  */
 I.refreshMessages = function(messages){
-    I.messages = messages;
+    var localMessages = JSON.parse(window.localStorage.getItem('messages')) || [];
+    for (var i = 0; i < messages.length; i++){
+        if (localMessages.find(function(element, index, array){ return !!(element.created == messages[i].created && element.from == messages[i].from && element.to == messages[i].to);}) === undefined)
+            localMessages.push(messages[i]);
+    }
+    localMessages.sort(function(a, b){if (a === null || b === null) return -1; return a.created - b.created;});
+    I.messages = localMessages.filter(function(item){return !!item;});
+    window.localStorage.setItem('messages', JSON.stringify(I.messages));
     I.showMessages();
 };
 
@@ -246,8 +272,8 @@ I.showMessages = function(){
     if (I.messages_block == null) return;
     var html = ['<ul class="messages-list">'];
     for (var i = 0; i < I.messages.length; i++){
-        if ((I.messages[i]['from'] != I.app.selected_user) &&
-            (I.messages[i]['from'] != I.app.nicname))
+        if (!((I.messages[i]['from'] == I.app.selected_user && I.messages[i]['to'] == I.app.nicname) ||
+            (I.messages[i]['to'] == I.app.selected_user && I.messages[i]['from'] == I.app.nicname)))
                 continue;
         html.push('<li><span class="created">[');
         html.push(I.timestamp2date(I.messages[i]['created']));
@@ -428,6 +454,18 @@ I.chat_enable = function(status){
     }else{
         I.input.disabled = true;
     }
+};
+
+/**
+ * generation UUID4 code
+ * @returns {string}
+ * @constructor
+ */
+UUID4 = function () {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
 };
 
 
